@@ -2,7 +2,7 @@
 @Description: 排序算法实践，均为升序
 @Author: 陈十一
 @Date: 2020-08-01 09:14:26
-@LastEditTime: 2020-08-01 10:57:53
+@LastEditTime: 2020-08-01 14:24:34
 @LastEditors: 陈十一
 '''
 
@@ -67,7 +67,7 @@ def Shell(a=[]):
 
 # Shell(data)
 
-# 原地归并排序 TODO 有 bug
+# 原地归并的抽象方法
 
 def merge(a=[], lo=0, mid=0, hi=0):
   i = lo
@@ -113,7 +113,46 @@ def Merge(a):
   sort(a, 0, len(a) - 1)
 
 # 对于长度为 N 的任意数组，自顶向下的归并排序需要 1/2NlgN 至 NlgN 次比较
-Merge(data)
+# Merge(data)
+
+# 快速排序的切分方法 TODO 有 bug
+def partition(a, lo, hi):
+  i = lo
+  j = hi + 1
+  
+  # 切分元素
+  v = a[lo]
+
+  while True:
+    while a[i + 1] < v:
+      i = i + 1
+      if i == hi:
+        break
+    while v < a[j - 1]:
+      j = j - 1
+      if j == lo:
+        break
+    if i >= j:
+      break
+    a[i], a[j] = a[j], a[i]
+  
+  a[lo], a[j] = a[j], a[lo]
+
+  return j
+    
+# 快速排序
+def Quick(a):
+
+  def sort(b, lo ,hi):
+    if hi <= lo:
+      return
+    j = partition(b, lo, hi)
+    sort(b, lo, j - 1)
+    sort(b, j + 1, hi)
+  
+  sort(a, 0, len(a) - 1)
+    
+Quick(data)
 
 print(data)
 
