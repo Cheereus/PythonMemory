@@ -2,7 +2,7 @@
 @Description: 排序算法实践，均为升序
 @Author: 陈十一
 @Date: 2020-08-01 09:14:26
-@LastEditTime: 2020-08-01 10:40:43
+@LastEditTime: 2020-08-01 10:57:53
 @LastEditors: 陈十一
 '''
 
@@ -72,11 +72,10 @@ def Shell(a=[]):
 def merge(a=[], lo=0, mid=0, hi=0):
   i = lo
   j = mid + 1
-  aux = [None] * (hi - lo + 1)
+  aux = [None] * len(a)
   
   k = lo
   while k <= hi:
-    print(k, aux, a)
     aux[k] = a[k]
     k = k + 1
 
@@ -113,7 +112,9 @@ def Merge(a):
   
   sort(a, 0, len(a) - 1)
 
+# 对于长度为 N 的任意数组，自顶向下的归并排序需要 1/2NlgN 至 NlgN 次比较
+Merge(data)
 
-Merge(data, 0, 4, 9)
+print(data)
 
       
