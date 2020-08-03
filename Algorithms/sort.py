@@ -2,8 +2,8 @@
 @Description: 排序算法实践，均为升序
 @Author: 陈十一
 @Date: 2020-08-01 09:14:26
-@LastEditTime: 2020-08-01 14:24:34
-@LastEditors: 陈十一
+LastEditTime: 2020-08-03 09:25:45
+LastEditors: 陈十一
 '''
 
 import random
@@ -68,7 +68,6 @@ def Shell(a=[]):
 # Shell(data)
 
 # 原地归并的抽象方法
-
 def merge(a=[], lo=0, mid=0, hi=0):
   i = lo
   j = mid + 1
@@ -115,7 +114,7 @@ def Merge(a):
 # 对于长度为 N 的任意数组，自顶向下的归并排序需要 1/2NlgN 至 NlgN 次比较
 # Merge(data)
 
-# 快速排序的切分方法 TODO 有 bug
+# 快速排序的切分方法 
 def partition(a, lo, hi):
   i = lo
   j = hi + 1
@@ -124,14 +123,17 @@ def partition(a, lo, hi):
   v = a[lo]
 
   while True:
-    while a[i + 1] < v:
-      i = i + 1
+    i = i + 1
+    while a[i] < v:
       if i == hi:
         break
-    while v < a[j - 1]:
-      j = j - 1
+      i = i + 1
+
+    j = j - 1
+    while v < a[j]:
       if j == lo:
         break
+      j = j - 1
     if i >= j:
       break
     a[i], a[j] = a[j], a[i]
