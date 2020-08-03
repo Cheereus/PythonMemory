@@ -2,8 +2,8 @@
 @Description: 
 @Author: 陈十一
 @Date: 2020-07-31 10:06:23
-@LastEditTime: 2020-07-31 10:17:05
-@LastEditors: 陈十一
+LastEditTime: 2020-08-03 11:04:54
+LastEditors: 陈十一
 '''
 
 # 想到 7 月 20 号作业也是关于因子的问题，于是借鉴了该作业的内容进行了修改
