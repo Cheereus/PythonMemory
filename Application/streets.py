@@ -2,7 +2,7 @@
 Description: 调用高德地图逆地理编码API 根据经纬度查询街道信息
 Author: 陈十一
 Date: 2020-08-03 14:23:35
-LastEditTime: 2020-08-08 07:40:23
+LastEditTime: 2020-08-08 07:55:44
 LastEditors: 陈十一
 '''
 import requests
@@ -23,8 +23,9 @@ params = {"location" : "", "key" : "0a3497aef8cfbce51cfb734df4ff5396"}
 # 文件路径
 filePath = 'data/7378小区.xlsx'
 x1 = xlrd.open_workbook(filePath)
-sheet = x1.sheets()
 
+# 获取经纬度 list
+sheet = x1.sheets()
 longitudes = sheet[0].col_values(1)
 latitude = sheet[0].col_values(2)
 
