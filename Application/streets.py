@@ -2,8 +2,8 @@
 Description: 调用高德地图逆地理编码API 根据经纬度查询街道信息
 Author: 陈十一
 Date: 2020-08-03 14:23:35
-LastEditTime: 2020-08-08 07:55:44
-LastEditors: 陈十一
+LastEditTime: 2020-08-12 14:59:00
+LastEditors: CheeReus_11
 '''
 import requests
 import xlrd
@@ -21,7 +21,7 @@ headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 params = {"location" : "", "key" : "0a3497aef8cfbce51cfb734df4ff5396"}
 
 # 文件路径
-filePath = 'data/7378小区.xlsx'
+filePath = 'data/2.xlsx'
 x1 = xlrd.open_workbook(filePath)
 
 # 获取经纬度 list
@@ -31,9 +31,9 @@ latitude = sheet[0].col_values(2)
 
 rows = len(longitudes)
 
-businessAreas = ["businessAreas"]
-streets = ["streets"]
-township = ["township"]
+businessAreas = []
+streets = []
+township = []
 
 # 记录异常返回的数据
 errors = []
@@ -62,7 +62,7 @@ def getData(xb, yb):
 # print(getData(116.3646, 40.07209))
 
 # 生成街道信息 list
-for i in range(1, rows):
+for i in range(0, rows):
   try:
     print(i, "of", rows)
     data = getData(longitudes[i], latitude[i]);
@@ -83,12 +83,12 @@ ws = wb.worksheets[0]
 ws.insert_cols(4)
 
 for index, row in enumerate(ws.rows): #按行读取
-    if index == 0:
-      row[3].value = '街道'
-    else:
-      if index < len(township):
-        print(index, "of", rows)
-        row[3].value = township[index]
+    # if index == 0:
+    #   row[3].value = '街道'
+    # else:
+    if index < len(township):
+      print(index, "of", rows)
+      row[3].value = township[index]
 
 # 输出异常数据的索引并保存所有数据到文件
 print("异常数据", errors)
