@@ -2,7 +2,7 @@
 Description: 
 Author: CheeReus_11
 Date: 2020-08-18 09:26:48
-LastEditTime: 2020-08-18 10:46:55
+LastEditTime: 2020-08-18 16:55:23
 LastEditors: CheeReus_11
 '''
 
@@ -59,7 +59,7 @@ for i in range(1,20):
                 group += 1
                 tmp_max = 0
             if value > tmp_max:
-                # 更新最大值和最大行
+                # 更新最大值和最大
                 tmp_max = value
                 max_line = line
 
