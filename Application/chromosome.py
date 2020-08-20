@@ -2,7 +2,7 @@
 Description: 
 Author: CheeReus_11
 Date: 2020-08-18 09:26:48
-LastEditTime: 2020-08-18 16:55:23
+LastEditTime: 2020-08-20 09:50:04
 LastEditors: CheeReus_11
 '''
 
@@ -63,4 +63,6 @@ for i in range(1,20):
                 tmp_max = value
                 max_line = line
 
+    f.writelines(' '.join(max_line) + '\n')
+    
 f.close()
