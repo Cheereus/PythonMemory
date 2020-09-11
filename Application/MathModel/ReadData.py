@@ -8,12 +8,12 @@ def read_from_xlsx(filePath):
 
 # 从 excel 中分别读取公司信息、进项发票、销项发票
 print('Reading excel file...')
-company_info, invoice_in, invoice_out = read_from_xlsx('data/123.xlsx')
+company_info, invoice_in, invoice_out = read_from_xlsx('data/302.xlsx')
 
 # 企业代号列表
 companies = company_info.col_values(0)[1:]
 # 信用评级
-rate = company_info.col_values(2)[1:]
+# rate = company_info.col_values(2)[1:]
 
 print('Data processing...')
 # 按企业对发票信息进行遍历
@@ -34,11 +34,11 @@ def get_invoice_data(invoice_sheet, c):
 
 invoice_in_data = get_invoice_data(invoice_in, companies)
 invoice_out_data = get_invoice_data(invoice_out, companies)
-data = [companies, rate, invoice_in_data, invoice_out_data]
+data = [companies, invoice_in_data, invoice_out_data]
 
 # 直接保存为二进制文件，避免再重复读取 excel
 print('Saving...')
-joblib.dump(data, 'data/data.pkl')
+joblib.dump(data, 'data/data_predict.pkl')
 
 
 

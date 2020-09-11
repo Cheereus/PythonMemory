@@ -4,21 +4,18 @@ import joblib
 import graphviz
 import pydotplus
 from Metrics import ARI, accuracy, NMI, F1
+import openpyxl
 
 print('Loading data...')
 companies, rate, data_after_process = joblib.load('data/data_after_process.pkl')
 
-clf = tree.DecisionTreeClassifier(max_depth=5)
-
-cross_model = clf
-scores = cross_val_score(cross_model, data_after_process, rate, cv=10)
-print(scores)
+clf = tree.DecisionTreeClassifier(max_depth=None)
 
 clf = clf.fit(data_after_process, rate)
 
-labels_predict=clf.predict(data_after_process)
+joblib.dump(clf, 'data/model.pkl')
 
-print('Accuracy:', accuracy(labels_predict, rate))
+print(clf.n_outputs_)
 
 dot_data = tree.export_graphviz(clf, out_file=None, 
                                          # 进项金额总和，     进项税额总和，   进项作废率，    进项发票比数，      销项金额总和，      销项税额总和，    销项作废率，     销项发票比数

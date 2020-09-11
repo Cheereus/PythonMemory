@@ -1,7 +1,7 @@
 import joblib
 
 print('Loading data...')
-companies, rate, invoice_in_data, invoice_out_data = joblib.load('data/data.pkl')
+companies, invoice_in_data, invoice_out_data = joblib.load('data/data_predict.pkl')
 
 # 对于每个公司，计算进项销项发票金额总和，税额总和，发票比数，发票作废率
 data_after_process = []
@@ -43,4 +43,4 @@ print(data_after_process)
 
 # 直接保存为二进制文件
 print('Saving...')
-joblib.dump([companies, rate, data_after_process], 'data/data_after_process.pkl')
+joblib.dump([companies, data_after_process], 'data/data_predict_after_process.pkl')
