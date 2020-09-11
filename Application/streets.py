@@ -65,7 +65,7 @@ def getData(xb, yb):
 for i in range(0, rows):
   try:
     print(i, "of", rows)
-    data = getData(longitudes[i], latitude[i]);
+    data = getData(longitudes[i], latitude[i])
     tmp = data.get('regeocode').get('addressComponent').get('township')
     
     # 高德对于查询不到的 township, 会返回一个空数组, 需要将其处理为空字符串否则无法写入 excel 文件
