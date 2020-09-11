@@ -1,8 +1,9 @@
 from sklearn import tree
 from sklearn.model_selection import cross_val_score
-import joblib 
+import joblib
 import graphviz
-import pydotplus 
+import pydotplus
+from Metrics import ARI, accuracy, NMI, F1
 
 print('Loading data...')
 companies, rate, data_after_process = joblib.load('data/data_after_process.pkl')
@@ -14,6 +15,10 @@ scores = cross_val_score(cross_model, data_after_process, rate, cv=10)
 print(scores)
 
 clf = clf.fit(data_after_process, rate)
+
+labels_predict=clf.predict(data_after_process)
+
+print('Accuracy:', accuracy(labels_predict, rate))
 
 dot_data = tree.export_graphviz(clf, out_file=None, 
                                          # 进项金额总和，     进项税额总和，   进项作废率，    进项发票比数，      销项金额总和，      销项税额总和，    销项作废率，     销项发票比数
