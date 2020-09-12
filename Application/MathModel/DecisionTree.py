@@ -1,5 +1,5 @@
 from sklearn import tree
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_val_score, LeaveOneOut
 import joblib
 import graphviz
 import pydotplus
@@ -7,21 +7,29 @@ from Metrics import ARI, accuracy, NMI, F1
 import openpyxl
 
 print('Loading data...')
-companies, rate, data_after_process = joblib.load('data/data_after_process.pkl')
+companies, rate, data_after_process = joblib.load('data/data_train_after.pkl')
 
 clf = tree.DecisionTreeClassifier(max_depth=None)
 
-scores = cross_val_score(clf, data_after_process, rate, cv=10)
-print(scores)
+# scores = cross_val_score(clf, data_after_process, rate, cv=10)
+# print(scores)
+loo = LeaveOneOut()
+correct = 0
+for train, test in loo.split(data_after_process):
+    print(train, test)
+    clf.fit(data_after_process[train], rate[train])  # fitting
+    y_p = clf.predict(data_after_process[test])
+    if y_p == rate[test]:
+        correct += 1
+print(correct / len(rate))
 
 clf = clf.fit(data_after_process, rate)
 
 joblib.dump(clf, 'data/model.pkl')
 
 dot_data = tree.export_graphviz(clf, out_file=None,
-                                # 进项金额总和，     进项税额总和，   进项作废率，    进项发票比数，      销项金额总和，      销项税额总和，    销项作废率，     销项发票比数
-                                feature_names=['sum_in_money', 'sum_in_tax', 'invalid_in', 'num_invoice_in',
-                                               'sum_out_money', 'sum_out_tax', 'invalid_out', 'num_invoice_out'],
+                                #
+                                feature_names=['profit', 'avg_in', 'avg_out'],
                                 class_names=rate,
                                 filled=True, rounded=True,
                                 special_characters=True)
