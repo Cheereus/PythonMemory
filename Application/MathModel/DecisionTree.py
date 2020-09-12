@@ -18,12 +18,13 @@ clf = clf.fit(data_after_process, rate)
 
 joblib.dump(clf, 'data/model.pkl')
 
-dot_data = tree.export_graphviz(clf, out_file=None, 
-                                         # 进项金额总和，     进项税额总和，   进项作废率，    进项发票比数，      销项金额总和，      销项税额总和，    销项作废率，     销项发票比数
-                         feature_names = ['sum_in_money', 'sum_in_tax', 'invalid_in', 'num_invoice_in', 'sum_out_money', 'sum_out_tax', 'invalid_out', 'num_invoice_out'],  
-                         class_names = rate,  
-                         filled = True, rounded=True,  
-                         special_characters = True) 
+dot_data = tree.export_graphviz(clf, out_file=None,
+                                # 进项金额总和，     进项税额总和，   进项作废率，    进项发票比数，      销项金额总和，      销项税额总和，    销项作废率，     销项发票比数
+                                feature_names=['sum_in_money', 'sum_in_tax', 'invalid_in', 'num_invoice_in',
+                                               'sum_out_money', 'sum_out_tax', 'invalid_out', 'num_invoice_out'],
+                                class_names=rate,
+                                filled=True, rounded=True,
+                                special_characters=True)
 graph = pydotplus.graph_from_dot_data(dot_data)
 graph.write_pdf("result.pdf")
 
