@@ -1,12 +1,15 @@
 import joblib
 from sklearn import svm
-from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import GridSearchCV
-from Utils import get_color
+from Utils import get_color, draw_scatter
+from Clustering import k_means, knn
+from Metrics import ARI, accuracy, NMI, F1
+from sklearn.model_selection import cross_val_score, LeaveOneOut
+import numpy as np
 
 print('Loading data...')
 companies, rate, data_after_process = joblib.load('data/data_train_after.pkl')
-# dim_data = joblib.load('data/dim_data.pkl')
+up_connection = joblib.load('data/down_connection.pkl')
 
 
 # SVM with best params using gridsearch and cross validation
@@ -41,8 +44,23 @@ def svm_predict(x, model):
 
 labels_int = get_color(rate, [1, 2, 3, 4])
 
-svm_1 = svm.SVC(C=1, degree=3, kernel='rbf', gamma=0.001,
-                decision_function_shape='ovo', verbose=0)
-scores = cross_val_score(svm_1, data_after_process, labels_int, cv=10)
+# knn training and predict
+# model = knn(up_connection, labels_int, 3)
+# labels_predict = model.predict(up_connection)
 
-print(scores)
+up_connection = np.array(up_connection)
+labels_int = np.array(labels_int)
+
+loo = LeaveOneOut()
+correct = 0
+for train, test in loo.split(up_connection):
+    model = knn(up_connection[train], labels_int[train], 3)
+    labels_predict = model.predict(up_connection[test])
+    if labels_predict == labels_int[test]:
+        correct += 1
+print(correct / len(rate))
+
+
+# draw_scatter(x, y, labels_predict, labels_int)
+
+# print(scores)

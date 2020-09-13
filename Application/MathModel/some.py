@@ -9,20 +9,17 @@ def read_from_xlsx(filePath):
 
 
 print('Reading excel file...')
-data = read_from_xlsx('data/222222.xlsx')
+data = read_from_xlsx('data/down_connection.xlsx')
 
 print('Data processing...')
-invoice_data = []
-rate = []
+up_connection = []
 
 row = data.nrows  # 总行数
-for i in range(1, row):
+for i in range(row):
     row_data = data.row_values(i)  # 第 i 行
-    invoice_data.append(row_data[1:9])
-    rate.append(row_data[9])
-    print(row_data[9], '/', row - 1)
+    up_connection.append(row_data)
 
 # 直接保存为二进制文件，避免再重复读取 excel
 print('Saving...')
-joblib.dump([invoice_data, rate], 'data/data_2.pkl')
-
+joblib.dump(up_connection, 'data/down_connection.pkl')
+print(up_connection)

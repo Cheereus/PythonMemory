@@ -7,6 +7,7 @@ from Utils import get_color, draw_scatter
 
 print('Loading data...')
 companies, rate, data_after_process = joblib.load('data/data_train_after.pkl')
+up_connection = joblib.load('data/down_connection.pkl')
 
 
 # Normalize
@@ -43,11 +44,11 @@ def get_pca(data, c=3, with_normalize=False):
 colors = get_color(rate, colors=None)
 
 # t-SNE
-dim_data = t_SNE(data_after_process, perp=50, with_normalize=False)
+# dim_data = t_SNE(up_connection, perp=50, with_normalize=True)
 
 # # PCA
-# dim_data, ratio, result = get_pca(data_after_process, c=2, with_normalize=True)
-# print(ratio)
+dim_data, ratio, result = get_pca(up_connection, c=20, with_normalize=True)
+print(ratio, sum(ratio))
 
 joblib.dump(dim_data, 'data/dim_data.pkl')
 
