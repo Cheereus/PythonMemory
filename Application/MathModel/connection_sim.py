@@ -9,7 +9,7 @@ companies, rate, data_after_process = joblib.load('data/data_train_after.pkl')
 up_connection = np.array(joblib.load('data/up_connection.pkl'))
 down_connection = np.array(joblib.load('data/down_connection.pkl'))
 
-connection = up_connection + down_connection
+connection = np.hstack((up_connection, down_connection))
 
 labels_int = np.array(get_color(rate, [1, 2, 3, 4]))
 
