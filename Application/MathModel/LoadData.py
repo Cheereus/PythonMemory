@@ -6,7 +6,7 @@ from Utils import get_color
 
 print('Loading data...')
 companies, rate, data_after_process = joblib.load('data/data_train_after.pkl')
-dim_data = joblib.load('data/dim_data.pkl')
+# dim_data = joblib.load('data/dim_data.pkl')
 
 
 # SVM with best params using gridsearch and cross validation
@@ -41,8 +41,8 @@ def svm_predict(x, model):
 
 labels_int = get_color(rate, [1, 2, 3, 4])
 
-svm_1 = svm.SVC(C=1, degree=3, kernel='sigmoid', gamma=0.001,
+svm_1 = svm.SVC(C=1, degree=3, kernel='rbf', gamma=0.001,
                 decision_function_shape='ovo', verbose=0)
-scores = cross_val_score(svm_1, dim_data, labels_int, cv=10)
+scores = cross_val_score(svm_1, data_after_process, labels_int, cv=10)
 
 print(scores)

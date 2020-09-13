@@ -43,10 +43,10 @@ def get_pca(data, c=3, with_normalize=False):
 colors = get_color(rate, colors=None)
 
 # t-SNE
-dim_data = t_SNE(data_after_process, perp=50, with_normalize=True)
+dim_data = t_SNE(data_after_process, perp=50, with_normalize=False)
 
 # # PCA
-# dim_data, ratio, result = get_pca(data_after_process, c=2, with_normalize=False)
+# dim_data, ratio, result = get_pca(data_after_process, c=2, with_normalize=True)
 # print(ratio)
 
 joblib.dump(dim_data, 'data/dim_data.pkl')

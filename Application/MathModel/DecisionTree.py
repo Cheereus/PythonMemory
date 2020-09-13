@@ -3,13 +3,15 @@ from sklearn.model_selection import cross_val_score, LeaveOneOut
 import joblib
 import graphviz
 import pydotplus
-from Metrics import ARI, accuracy, NMI, F1
-import openpyxl
+import numpy as np
 
 print('Loading data...')
 companies, rate, data_after_process = joblib.load('data/data_train_after.pkl')
 
-clf = tree.DecisionTreeClassifier(max_depth=None)
+data_after_process = np.array(data_after_process)
+rate = np.array(rate)
+
+clf = tree.DecisionTreeClassifier(max_depth=10)
 
 # scores = cross_val_score(clf, data_after_process, rate, cv=10)
 # print(scores)
@@ -27,12 +29,13 @@ clf = clf.fit(data_after_process, rate)
 
 joblib.dump(clf, 'data/model.pkl')
 
+print(rate)
+
 dot_data = tree.export_graphviz(clf, out_file=None,
-                                #
-                                feature_names=['profit', 'avg_in', 'avg_out'],
-                                class_names=rate,
-                                filled=True, rounded=True,
-                                special_characters=True)
+                                #               利润率     作废率      发票比数    平均每日交易额
+                                feature_names=['profit', 'invalid', 'numbers', 'day_money'],
+                                class_names=['A', 'B', 'C', 'D'],
+                                filled=True, rounded=True)
 graph = pydotplus.graph_from_dot_data(dot_data)
 graph.write_pdf("result.pdf")
 
