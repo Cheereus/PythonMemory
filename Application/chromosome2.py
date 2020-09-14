@@ -39,13 +39,17 @@ for item in data:
     BP_A = int(item[1])
     BP_B = int(item[4])
     r2 = float(item[-1])
-    print(CHR_A, BP_A, t)
+    # print(CHR_A, BP_A, t)
     t += 1
 
     # 开始下一个染色体前重置窗口，并写入上一个染色体的最后一个基因
     if CHR_A > int(current_gene[0]):
-        r2_avg = r2_sum / b_num
+        if b_num == 0:
+            r2_avg = 0
+        else:
+            r2_avg = r2_sum / b_num
         f.writelines(' '.join([current_gene[0], current_gene[2], current_gene[1], str(r2_avg)]) + '\n')
+        current_gene = item
         group = 1
 
     # 窗口滑动时更新当前基因，重置当前相关系数和，并加入结果
