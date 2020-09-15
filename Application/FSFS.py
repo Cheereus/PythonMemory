@@ -180,9 +180,9 @@ for j in range(19):
     theta_by_chr.append(theta_i)
 
 # 输出各染色体子集大小 并写入文件
-f = open('data/result_FSFS.txt', 'a')
+f_result = open('data/result_FSFS.txt', 'a')
 for j in range(19):
     print('R', j, ':', len(R_by_chr[j]), theta_by_chr[j])
     for k in R_by_chr[j]:
-        f.writelines(str(j + 1) + ' ' + k + '\n')
-f.close()
+        f_result.writelines(str(j + 1) + ' ' + k + '\n')
+f_result.close()
