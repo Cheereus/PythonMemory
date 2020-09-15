@@ -85,7 +85,6 @@ def calc_similarity_by_chromosome():
 
 
 def FSFS(similarity, snp_map, chr_num, k=5):
-
     similarity_matrix = 1 - np.array(similarity)
     R_sets = np.array(snp_map)
     k_inner = k
@@ -122,7 +121,8 @@ def FSFS(similarity, snp_map, chr_num, k=5):
                 dki_index.append(fi_kth_index)
                 dki_value.append(fi_kth_value)
 
-            return dki_value[np.array(dki_value).argmin()], dki_index[np.array(dki_value).argmin()], k_neighbors_index[dki_index[np.array(dki_value).argmin()]]
+            return dki_value[np.array(dki_value).argmin()], dki_index[np.array(dki_value).argmin()], k_neighbors_index[
+                dki_index[np.array(dki_value).argmin()]]
 
         # 最小的 dki 即 dk0
         # f0 索引
@@ -185,6 +185,6 @@ for j in range(19):
 f_result = open('data/result_FSFS.txt', 'a')
 for j in range(19):
     print('R', j, ':', len(R_by_chr[j]), theta_by_chr[j])
-    for k in R_by_chr[j]:
-        f_result.writelines(str(j + 1) + ' ' + k + '\n')
+    for m in R_by_chr[j]:
+        f_result.writelines(str(j + 1) + ' ' + m + '\n')
 f_result.close()
