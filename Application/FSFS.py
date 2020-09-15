@@ -1,3 +1,5 @@
+# Choosing SNPs Using Feature Selection (Unsupervised Feature Selection Using Feature Similarity, FSFS)
+
 import numpy as np
 import joblib
 
