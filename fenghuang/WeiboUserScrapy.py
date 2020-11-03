@@ -23,7 +23,7 @@ from lxml import etree
 import json
 requests.packages.urllib3.disable_warnings()
 
-Cookie = '_T_WM=71607769340; SCF=At1W2BuFyC6DEFbKkRucCqvIE-ZPRfb3GfCPW6e7dEd7UnpfrKgLiaOWaJC8NsdcA-Ng1fVjadbwvQS0dGOsdrk.; SUB=_2A25ymw03DeRhGeNP7FIU9CrLzTWIHXVuZ5N_rDV6PUJbktAKLWTDkW1NTnopJG2_DKzkuvGYdqvdbbPts6U2AHdi; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9Wh2UJ7nlBh5KfSc32vEcO7a5NHD95QfeKM7SKBXS0q4Ws4DqcjeBcyL9HiLUPSkP02p; SUHB=08J7W7ePY2FdAq; SSOLoginState=1604287847; MLOGIN=1'
+Cookie = '_T_WM=71607769340; SCF=At1W2BuFyC6DEFbKkRucCqvIE-ZPRfb3GfCPW6e7dEd7UnpfrKgLiaOWaJC8NsdcA-Ng1fVjadbwvQS0dGOsdrk.; SUB=_2A25ymw03DeRhGeNP7FIU9CrLzTWIHXVuZ5N_rDV6PUJbktAKLWTDkW1NTnopJG2_DKzkuvGYdqvdbbPts6U2AHdi; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9Wh2UJ7nlBh5KfSc32vEcO7a5NHD95QfeKM7SKBXS0q4Ws4DqcjeBcyL9HiLUPSkP02p; SUHB=08J7W7ePY2FdAq; WEIBOCN_FROM=1110105030'
 User_Agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:66.0) Gecko/20100101 Firefox/66.0'
 
 
@@ -48,8 +48,8 @@ class WeiboUserScrapy():
         self.followers = 0  # 用户粉丝数
         self.weibo = []  # 存储爬取到的所有微博信息
         self.run()
-        if not os.path.exists('user'):
-            os.mkdir('user')
+        if not os.path.exists('../user'):
+            os.mkdir('../user')
 
     def deal_html(self, url):
         """处理html"""
@@ -514,4 +514,4 @@ class WeiboUserScrapy():
             print(traceback.format_exc())
 
 if __name__ == '__main__':
-    WeiboUserScrapy(user_id=2803301701, filter=1)
+    WeiboUserScrapy(user_id=2615417307, filter=1)
