@@ -57,7 +57,8 @@ for i in range(1, 20):
             # 在每进入下一个窗口的时候，将前一个窗口的最大值写入文件
             if location >= group * window_size:
                 print(chromosome)
-                f.writelines(' '.join(max_line) + '\n')
+                if tmp_max != 0:
+                    f.writelines(' '.join(max_line) + '\n')
                 group += 1
                 tmp_max = 0
             if value > tmp_max:
