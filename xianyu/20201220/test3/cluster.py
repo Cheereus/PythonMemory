@@ -67,5 +67,5 @@ color = get_color(DB_cluster.labels_)
 draw_scatter(X[:, 0], X[:, 1], DB_cluster.labels_, color, title='DBSCAN')
 
 # 输出两种方法的轮廓系数
-print("轮廓系数：", metrics.silhouette_score(X, km2.labels_, metric='euclidean'))
-print("轮廓系数：", metrics.silhouette_score(X, DB_cluster.labels_, metric='euclidean'))
+print("k-means 轮廓系数：", metrics.silhouette_score(X, km2.labels_, metric='euclidean'))
+print("DBSCAN 轮廓系数：", metrics.silhouette_score(X, DB_cluster.labels_, metric='euclidean'))

@@ -29,8 +29,7 @@ y_pred = soft_svm.predict(standardScaler.transform(X_test))
 acc = accuracy_score(y_test, y_pred)
 recall = recall_score(y_test, y_pred, average='weighted')
 precision = precision_score(y_test, y_pred, average='weighted')
-print(y_test)
-print(y_pred)
+print('acc', 'recall', 'precision')
 print(acc, recall, precision)
 
 

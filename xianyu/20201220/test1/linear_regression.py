@@ -32,5 +32,5 @@ reg = LinearRegression().fit(x_train, y_train)
 
 # 模型预测，输出真实值和预测值
 y_pred = reg.predict(x_test)
-print(y_test)
-print(y_pred)
+print('真实值', np.array(y_test).T)
+print('预测值', y_pred.T)

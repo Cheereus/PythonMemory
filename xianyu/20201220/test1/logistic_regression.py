@@ -15,6 +15,6 @@ LR = LogisticRegression().fit(x_train, y_train)
 
 # 模型预测并计算准确率
 y_pred = LR.predict(x_test)
-print(y_test)
-print(y_pred)
+print('真实值', y_test)
+print('预测值', y_pred)
 print(accuracy_score(y_test, y_pred))
