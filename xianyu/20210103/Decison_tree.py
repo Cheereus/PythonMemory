@@ -19,7 +19,7 @@ x_embed = TSNE(n_components=2).fit_transform(data)
 colors = ['red', 'black']
 labels = ['sick', 'healthy']
 for i in range(x_embed.shape[1]):
-    plt.scatter(x_embed[y == i, 0], x_embed[y == i, 1], c = colors[i], label = labels[i])
+    plt.scatter(x_embed[y == i, 0], x_embed[y == i, 1], c=colors[i], label=labels[i])
 plt.legend()
 plt.show()
 
@@ -40,9 +40,3 @@ dot_data = tree.export_graphviz(clf, out_file=None,
                                 filled=True, rounded=True)
 graph = pydotplus.graph_from_dot_data(dot_data)
 graph.write_pdf("result1.pdf")
-
-
-
-
-
-
