@@ -11,7 +11,7 @@ from tensorflow.keras import Sequential, layers
 
 batch_size = 100
 
-g = os.walk("chineseminst/train_data/")
+g = os.walk("../chineseminst/train_data/")
 for path, d, file_list in g:
     pass
 train_data = []
@@ -48,7 +48,7 @@ def accuracy(predict_labels, true_labels):
     return correct / label_length
 
 
-g = os.walk("chineseminst/test_data/")
+g = os.walk("../chineseminst/test_data/")
 for path, d, file_list in g:
     pass
 test_data = []
