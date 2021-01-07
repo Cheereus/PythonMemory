@@ -5,14 +5,16 @@ from pyecharts.charts import Bar
 from pyecharts import options as opts
 
 """plt方法"""
-x = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3]
-y = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+x = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2]
+y = [0.55, 0.6, 0.45, 0.65, 0.55, 0.80, 0.4, 0.35, 0.35, 0.55, 0.45, 0.6]
 fig = plt.figure()
-plt.bar(x, y, 0.1, color=["red", "palegreen", "blue", "yellow", "orange", "purple"])
-plt.xlabel("x")
+plt.bar(x, y, 0.1, color=["red", "palegreen", "blue", "cyan", "orange", "purple"], align='center')
+# plt.xlabel("x")
 plt.ylabel("ACC")
+plt.ylim([0, 1.1])
 plt.title("title")
-plt.xticks([])
+# plt.xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3])
+plt.xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2])
 plt.show()
 
 """pyecahrts方法生成html
