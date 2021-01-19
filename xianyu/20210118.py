@@ -68,7 +68,6 @@ class ApplicationWindow(QMainWindow):
 
         self.running = False
 
-        # self.center()
         # 布局
         self.main_widget = QWidget(self)
         mlayout = QHBoxLayout(self.main_widget)
@@ -76,7 +75,7 @@ class ApplicationWindow(QMainWindow):
         rlayout = QVBoxLayout()
 
         self.addForm(self.llayout)  # 表单初始化
-        addTable(self, rlayout)  # 表格初始化
+        addVideo(self, rlayout)  # 视频播放窗口初始化
         self.addMenu()  # 菜单栏初始化
 
         # 窗口初始化
@@ -85,6 +84,7 @@ class ApplicationWindow(QMainWindow):
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
 
+        # 监听线程初始化
         self.timer = VideoTimer()
         self.timer.timeSignal.signal[str].connect(self.changeStatus)
         self.timer.start()
@@ -147,6 +147,7 @@ class ApplicationWindow(QMainWindow):
                 self.player.stop()
                 self.current_video = 0
 
+    # 导入视频
     def loadVideo(self):
         file_name = QFileDialog.getOpenFileName()[0]
         if len(file_name) > 0:
@@ -176,6 +177,7 @@ class ApplicationWindow(QMainWindow):
                 self.llayout.addRow(self.stop_label_list[self.idx], self.stop_btn_list[self.idx])
             self.start_play_btn.setDisabled(False)
 
+    # 清除已导入的所有视频
     def clearVideo(self):
         self.file_label.setText('请按顺序导入视频')
         self.sep_file_label.setText('请按顺序导入视频')
@@ -206,15 +208,19 @@ class ApplicationWindow(QMainWindow):
         self.current_video = 0
         self.running = False
 
+    # 播放视频
     def playVideo(self, video):
         self.player.setMedia(QMediaContent(QUrl.fromLocalFile(video)))  # 选取视频文件
         self.player.play()
 
+    # 队列循环播放
     def playList(self):
         if self.current_video == len(self.file_list):
             self.current_video = 0
         self.playVideo(self.file_list[self.current_video])
 
+    # 分时循环播放
+    # 根据时间计算当前应该播放的视频，如果没有则返回 0
     def checkTime(self):
         self.now_time = time.strftime("%H:%M:%S", time.localtime())
         video_to_play = 0
@@ -224,11 +230,13 @@ class ApplicationWindow(QMainWindow):
 
         return video_to_play
 
+    # 分时循环播放
     def playSep(self):
         self.current_video = self.checkTime()
         if self.current_video > 0:
             self.playVideo(self.sep_file_list[self.current_video])
 
+    # 开始运行
     def startRunning(self):
         self.running = True
         self.stop_play_btn.setDisabled(False)
@@ -238,6 +246,7 @@ class ApplicationWindow(QMainWindow):
         else:
             self.playSep()
 
+    # 停止运行
     def stopRunning(self):
         self.running = False
         self.stop_play_btn.setDisabled(True)
@@ -279,12 +288,14 @@ class ApplicationWindow(QMainWindow):
                 self.stop_label_list[i+1].setVisible(False)
                 self.stop_btn_list[i+1].setVisible(False)
 
+    # 队列循环播放的时间设置
     def start_time_change(self, value):
         self.start_time = QtCore.QTime.toString(value)
 
     def stop_time_change(self, value):
         self.stop_time = QtCore.QTime.toString(value)
 
+    # 分时循环播放的时间设置
     def start_time_list_change(self):
         v_id = int(self.sender().objectName())
         self.start_time_list[v_id] = QtCore.QTime.toString(self.start_btn_list[v_id].time())
@@ -293,6 +304,7 @@ class ApplicationWindow(QMainWindow):
         v_id = int(self.sender().objectName())
         self.stop_time_list[v_id] = QtCore.QTime.toString(self.stop_btn_list[v_id].time())
 
+    # 表单初始化
     def addForm(self, llayout):
         # llayout.setLabelAlignment(QtCore.Qt.AlignRight)  # 标签右对齐
         self.type_label = QLabel('当前模式：' + self.play_type_text[self.play_type])
@@ -336,7 +348,8 @@ class ApplicationWindow(QMainWindow):
         llayout.addRow(self.stop_play_btn)
 
 
-def addTable(self, rlayout):
+# 视频控件初始化
+def addVideo(self, rlayout):
     self.player = QMediaPlayer()
     self.video_widget = QVideoWidget()
     self.video_widget.show()
