@@ -121,6 +121,7 @@ class ApplicationWindow(QMainWindow):
     def changeStatus(self):
         self.now_time = time.strftime("%H:%M:%S", time.localtime())
         if self.play_type == 0:
+            print(self.start_time, self.now_time, self.stop_time, self.running)
             if self.start_time < self.now_time < self.stop_time and self.running:
 
                 if self.player.state() == QMediaPlayer.StoppedState:
@@ -282,7 +283,7 @@ class ApplicationWindow(QMainWindow):
         self.start_time = QtCore.QTime.toString(value)
 
     def stop_time_change(self, value):
-        self.start_time = QtCore.QTime.toString(value)
+        self.stop_time = QtCore.QTime.toString(value)
 
     def start_time_list_change(self):
         v_id = int(self.sender().objectName())
