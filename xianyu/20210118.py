@@ -5,12 +5,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.Qt import QUrl
 import sys
 import time
+import sip
 
 
+# 建立线程间通讯
 class Communicate(QtCore.QObject):
     signal = QtCore.pyqtSignal(str)
 
 
+# 建立时钟线程
 class VideoTimer(QtCore.QThread):
 
     def __init__(self, frequent=1):
@@ -42,14 +45,26 @@ class ApplicationWindow(QMainWindow):
 
         # 一些全局变量
         self.idx = 0
-        self.file_list = []
         self._fullscreen = False
-        self.current_video = 0
         self.play_type = 0
         self.play_type_text = ['队列循环播放', '分时循环播放']
+        self.current_video = 0
+
+        # 队列循环
+        self.file_list = []
         self.now_time = time.strftime("%H:%M:%S", time.localtime())
         self.start_time = '09:00:00'
         self.stop_time = '16:00:00'
+
+        # 分时循环
+        self.sep_file_list = {}
+        self.file_label_list = {}
+        self.start_label_list = {}
+        self.start_btn_list = {}
+        self.start_time_list = {}
+        self.stop_label_list = {}
+        self.stop_btn_list = {}
+        self.stop_time_list = {}
 
         self.running = False
 
@@ -57,15 +72,15 @@ class ApplicationWindow(QMainWindow):
         # 布局
         self.main_widget = QWidget(self)
         mlayout = QHBoxLayout(self.main_widget)
-        llayout = QFormLayout()
+        self.llayout = QFormLayout()
         rlayout = QVBoxLayout()
 
-        self.addForm(llayout)  # 表单初始化
+        self.addForm(self.llayout)  # 表单初始化
         addTable(self, rlayout)  # 表格初始化
         self.addMenu()  # 菜单栏初始化
 
         # 窗口初始化
-        mlayout.addLayout(llayout)
+        mlayout.addLayout(self.llayout)
         mlayout.addLayout(rlayout)
         self.main_widget.setFocus()
         self.setCentralWidget(self.main_widget)
@@ -89,66 +104,193 @@ class ApplicationWindow(QMainWindow):
         self.menuBar().addMenu(self.file_menu)
 
         self.opt_menu = QMenu('运行', self)
-        self.opt_menu.addAction('开始运行', self.playList)
+        self.opt_menu.addAction('开始运行', self.startRunning)
         self.opt_menu.addAction('停止运行', self.stopRunning)
         self.menuBar().addMenu(self.opt_menu)
 
     def mouseDoubleClickEvent(self, event):
         self.toggle_fullscreen()
-        # self.player.play()
 
     def toggle_fullscreen(self):
-        self._fullscreen = not self._fullscreen
-        print('setFullScreen', self._fullscreen)
-        self.video_widget.setFullScreen(self._fullscreen)
-
-    def changeStatus(self):
-        self.idx += 1
-        self.now_time = time.strftime("%H:%M:%S", time.localtime())
-        if self.start_time < self.now_time < self.stop_time and self.running:
-
-            if self.player.state() == QMediaPlayer.StoppedState:
-                print('running', self.player.state(), self.current_video)
-                self.current_video += 1
-                self.playList()
-
-        else:
-            self._fullscreen = False
+        if self.running:
+            self._fullscreen = not self._fullscreen
+            print('setFullScreen', self._fullscreen)
             self.video_widget.setFullScreen(self._fullscreen)
-            self.player.stop()
+
+    # 由时钟线程触发的播放状态管理
+    def changeStatus(self):
+        self.now_time = time.strftime("%H:%M:%S", time.localtime())
+        if self.play_type == 0:
+            if self.start_time < self.now_time < self.stop_time and self.running:
+
+                if self.player.state() == QMediaPlayer.StoppedState:
+                    print('running', self.player.state(), self.current_video)
+                    self.current_video += 1
+                    self.playList()
+
+            else:
+                self._fullscreen = False
+                self.video_widget.setFullScreen(self._fullscreen)
+                self.player.stop()
+                self.current_video = 0
+        else:
+            video_to_play = self.checkTime()
+            if video_to_play > 0 and self.running:
+                if self.player.state() == QMediaPlayer.StoppedState:
+                    self.playSep()
+                    print('running', self.player.state(), self.current_video)
+                pass
+            else:
+                self._fullscreen = False
+                self.video_widget.setFullScreen(self._fullscreen)
+                self.player.stop()
+                self.current_video = 0
 
     def loadVideo(self):
-        self.file_list.append(QFileDialog.getOpenFileName()[0])
-        self.file_label.setText('已导入视频\n' + '\n'.join(self.file_list))
+        file_name = QFileDialog.getOpenFileName()[0]
+        if len(file_name) > 0:
+            if self.play_type == 0:
+                self.file_list.append(file_name)
+                self.file_label.setText('已导入视频\n' + '\n'.join(self.file_list))
+            else:
+                self.sep_file_label.setText('已导入视频\n')
+                self.idx += 1
+                self.sep_file_list[self.idx] = file_name
+                self.file_label_list[self.idx] = QLabel('\n' + file_name)
+                self.llayout.addRow(self.file_label_list[self.idx])
+                self.start_label_list[self.idx] = QLabel('开始时间')
+                self.start_btn_list[self.idx] = QTimeEdit(QtCore.QTime.fromString('00:00:00'))
+                self.start_btn_list[self.idx].setObjectName(str(self.idx))
+                self.start_btn_list[self.idx].setFixedWidth(200)
+                self.start_time_list[self.idx] = '00:00:00'
+                self.start_btn_list[self.idx].timeChanged.connect(self.start_time_list_change)
+                self.llayout.addRow(self.start_label_list[self.idx], self.start_btn_list[self.idx])
+
+                self.stop_label_list[self.idx] = QLabel('停止时间')
+                self.stop_btn_list[self.idx] = QTimeEdit(QtCore.QTime.fromString('00:00:00'))
+                self.stop_btn_list[self.idx].setObjectName(str(self.idx))
+                self.stop_btn_list[self.idx].setFixedWidth(200)
+                self.stop_time_list[self.idx] = '00:00:00'
+                self.stop_btn_list[self.idx].timeChanged.connect(self.stop_time_list_change)
+                self.llayout.addRow(self.stop_label_list[self.idx], self.stop_btn_list[self.idx])
+            self.start_play_btn.setDisabled(False)
 
     def clearVideo(self):
         self.file_label.setText('请按顺序导入视频')
+        self.sep_file_label.setText('请按顺序导入视频')
         self.file_list = []
+
+        for i in range(self.idx):
+            self.llayout.removeWidget(self.file_label_list[i+1])
+            sip.delete(self.file_label_list[i+1])
+            self.llayout.removeWidget(self.start_label_list[i+1])
+            sip.delete(self.start_label_list[i+1])
+            self.llayout.removeWidget(self.start_btn_list[i+1])
+            sip.delete(self.start_btn_list[i+1])
+            self.llayout.removeWidget(self.stop_label_list[i+1])
+            sip.delete(self.stop_label_list[i+1])
+            self.llayout.removeWidget(self.stop_btn_list[i+1])
+            sip.delete(self.stop_btn_list[i+1])
+
+        self.sep_file_list = {}
+        self.file_label_list = {}
+        self.start_label_list = {}
+        self.start_btn_list = {}
+        self.start_time_list = {}
+        self.stop_label_list = {}
+        self.stop_btn_list = {}
+        self.stop_time_list = {}
+
+        self.idx = 0
+        self.current_video = 0
         self.running = False
 
-    def stopRunning(self):
-        self.running = False
-
-    def playVideo(self):
-        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.file_list[0])))  # 选取视频文件
+    def playVideo(self, video):
+        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(video)))  # 选取视频文件
         self.player.play()
 
     def playList(self):
-        self.running = True
         if self.current_video == len(self.file_list):
             self.current_video = 0
-        self.player.setMedia(QMediaContent(QUrl.fromLocalFile(self.file_list[self.current_video])))
-        self.player.play()
+        self.playVideo(self.file_list[self.current_video])
 
+    def checkTime(self):
+        self.now_time = time.strftime("%H:%M:%S", time.localtime())
+        video_to_play = 0
+        for i in range(self.idx):
+            if self.start_time_list[i+1] < self.now_time < self.stop_time_list[i+1]:
+                video_to_play = i + 1
+
+        return video_to_play
+
+    def playSep(self):
+        self.current_video = self.checkTime()
+        if self.current_video > 0:
+            self.playVideo(self.sep_file_list[self.current_video])
+
+    def startRunning(self):
+        self.running = True
+        self.stop_play_btn.setDisabled(False)
+        self.start_play_btn.setDisabled(True)
+        if self.play_type == 0:
+            self.playList()
+        else:
+            self.playSep()
+
+    def stopRunning(self):
+        self.running = False
+        self.stop_play_btn.setDisabled(True)
+        self.start_play_btn.setDisabled(False)
+
+    # 切换播放模式
     def toggle_play_type(self):
         self.play_type = 0 if self.play_type else 1
         self.type_label.setText('当前模式：' + self.play_type_text[self.play_type])
+        if self.play_type == 1:
+            self.file_label.setVisible(False)
+            self.set_time_label.setVisible(False)
+            self.start_time_label.setVisible(False)
+            self.start_time_btn.setVisible(False)
+            self.stop_time_label.setVisible(False)
+            self.stop_time_btn.setVisible(False)
+
+            self.sep_file_label.setVisible(True)
+            for i in range(self.idx):
+                self.file_label_list[i+1].setVisible(True)
+                self.start_label_list[i+1].setVisible(True)
+                self.start_btn_list[i+1].setVisible(True)
+                self.stop_label_list[i+1].setVisible(True)
+                self.stop_btn_list[i+1].setVisible(True)
+
+        else:
+            self.file_label.setVisible(True)
+            self.set_time_label.setVisible(True)
+            self.start_time_label.setVisible(True)
+            self.start_time_btn.setVisible(True)
+            self.stop_time_label.setVisible(True)
+            self.stop_time_btn.setVisible(True)
+
+            self.sep_file_label.setVisible(False)
+            for i in range(self.idx):
+                self.file_label_list[i+1].setVisible(False)
+                self.start_label_list[i+1].setVisible(False)
+                self.start_btn_list[i+1].setVisible(False)
+                self.stop_label_list[i+1].setVisible(False)
+                self.stop_btn_list[i+1].setVisible(False)
 
     def start_time_change(self, value):
         self.start_time = QtCore.QTime.toString(value)
 
     def stop_time_change(self, value):
         self.start_time = QtCore.QTime.toString(value)
+
+    def start_time_list_change(self):
+        v_id = int(self.sender().objectName())
+        self.start_time_list[v_id] = QtCore.QTime.toString(self.start_btn_list[v_id].time())
+
+    def stop_time_list_change(self):
+        v_id = int(self.sender().objectName())
+        self.stop_time_list[v_id] = QtCore.QTime.toString(self.stop_btn_list[v_id].time())
 
     def addForm(self, llayout):
         # llayout.setLabelAlignment(QtCore.Qt.AlignRight)  # 标签右对齐
@@ -161,6 +303,10 @@ class ApplicationWindow(QMainWindow):
         self.file_label = QLabel('请按顺序导入视频')
         self.file_label.setFixedWidth(300)
         llayout.addRow(self.file_label)
+        self.sep_file_label = QLabel('请按顺序导入视频')
+        self.sep_file_label.setFixedWidth(300)
+        self.sep_file_label.setVisible(False)
+        llayout.addRow(self.sep_file_label)
 
         self.set_time_label = QLabel('\n设置播放时间段')
         llayout.addRow(self.set_time_label)
@@ -176,6 +322,17 @@ class ApplicationWindow(QMainWindow):
         self.stop_time_btn.setFixedWidth(200)
         self.stop_time_btn.timeChanged.connect(self.stop_time_change)
         llayout.addRow(self.stop_time_label, self.stop_time_btn)
+
+        self.start_play_btn = QPushButton('开始运行')
+        self.start_play_btn.clicked.connect(self.startRunning)
+        self.start_play_btn.setFixedWidth(340)
+        self.start_play_btn.setDisabled(True)
+        llayout.addRow(self.start_play_btn)
+        self.stop_play_btn = QPushButton('停止运行')
+        self.stop_play_btn.clicked.connect(self.stopRunning)
+        self.stop_play_btn.setFixedWidth(340)
+        self.stop_play_btn.setDisabled(True)
+        llayout.addRow(self.stop_play_btn)
 
 
 def addTable(self, rlayout):
