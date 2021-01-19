@@ -1,7 +1,7 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtMultimedia import QMediaContent, QMediaPlayer
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 from PyQt5.Qt import QUrl
 import sys
 import time
@@ -352,8 +352,10 @@ class ApplicationWindow(QMainWindow):
 def addVideo(self, rlayout):
     self.player = QMediaPlayer()
     self.video_widget = QVideoWidget()
-    self.video_widget.show()
+    self.video_widget.setStyleSheet("background-color:black;")
+
     rlayout.addWidget(self.video_widget)
+    self.video_widget.show()
     self.player.setVideoOutput(self.video_widget)  # 视频输出的widget
     QtWidgets.QShortcut(
         QtGui.QKeySequence(QtCore.Qt.Key_Escape),
