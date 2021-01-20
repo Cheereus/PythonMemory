@@ -3,3 +3,6 @@ data/
 chineseminst/
 chineseminst.zip
 .ipynb_checkpoints/
+build/
+dist/
+*.spec
