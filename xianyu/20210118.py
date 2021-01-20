@@ -159,6 +159,7 @@ class ApplicationWindow(QMainWindow):
                 self.idx += 1
                 self.sep_file_list[self.idx] = file_name
                 self.file_label_list[self.idx] = QLabel('\n' + file_name)
+                self.file_label_list[self.idx].setFixedWidth(340)
                 self.llayout.addRow(self.file_label_list[self.idx])
                 self.start_label_list[self.idx] = QLabel('开始时间')
                 self.start_btn_list[self.idx] = QTimeEdit(QtCore.QTime.fromString('00:00:00'))
