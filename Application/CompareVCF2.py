@@ -1,8 +1,8 @@
 import vcf
 
 # 读取文件
-real_reader = vcf.Reader(filename='data/DD_gt_gs_real_impute.vcf')
-generate_reader = vcf.Reader(filename='data/DD_MOLO0.3_gt_gs_impute.vcf')
+real_reader = vcf.Reader(filename='data/DD_gt_real_impute_1.vcf')
+generate_reader = vcf.Reader(filename='data/DD_MOLO3.0_gt_impute.vcf')
 
 
 # 获取基因型
@@ -58,7 +58,7 @@ for real, generate in zip(real_reader, generate_reader):
         n_line_samples += 1
         n_samples += 1
 
-        if real_gene_type == generate_gene_type:
+        if real_gene_type == generate_gene_type or real_gene_type == generate_gene_type[::-1]:
             result.append('1')
             line_acc += 1
             all_acc += 1

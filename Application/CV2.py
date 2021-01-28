@@ -1,8 +1,8 @@
 import vcf
 
 # 读取文件
-real_reader = vcf.Reader(filename='data/DD_gt_gs_real_impute.vcf')
-generate_reader = vcf.Reader(filename='data/DD_MOLO0.3_gt_impute.vcf')
+real_reader = vcf.Reader(filename='data/DD_gt_real_impute_1.vcf')
+generate_reader = vcf.Reader(filename='data/DD_MOLO3.0_gt_impute.vcf')
 
 
 # 获取基因型
@@ -76,6 +76,12 @@ for real, generate in zip(real_reader, generate_reader):
         else:
             result_txt += '0'
 
+        if real_gene_type[0] != generate_gene_type[0] and real_gene_type[1] != generate_gene_type[1] and (real_gene_type[0] == generate_gene_type[1] and real_gene_type[1] == generate_gene_type[0]):
+            result_txt = '11'
+            line_acc += 2
+            all_acc += 2
+            accuracy[col] += 2
+
         result.append(result_txt)
         # 列进一
         col += 1
@@ -91,7 +97,7 @@ for real, generate in zip(real_reader, generate_reader):
 
 
 # 给准确率这行前面加三个词来保持工整
-accuracy = ['ACC', 'PER', 'COL'] + [str(round(i / row, 4)) for i in accuracy]
+accuracy = ['ACC', 'PER', 'COL'] + [str(round(i / (row*2), 4)) for i in accuracy]
 f.writelines(' '.join(accuracy) + '\n')
 
 f.close()
