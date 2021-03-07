@@ -7,14 +7,14 @@ import pyaudio
 import struct as st
 
 
-def Short_Time_Energy(signal, windowLength, step):
+def Short_Time_Energy(signal, window_length, frame_step):
     """
     计算短时能量
     Parameters
     ----------
     signal : 原始信号.
-    windowLength : 帧长.
-    step : 帧移.
+    window_length : 帧长.
+    frame_step : 帧移.
 
     Returns
     -------
@@ -23,23 +23,23 @@ def Short_Time_Energy(signal, windowLength, step):
     signal = signal / np.max(signal)  # 归一化
     curPos = 0
     L = len(signal)
-    numOfFrames = np.asarray(np.floor((L - windowLength) / step) + 1, dtype=int)
-    E = np.zeros((numOfFrames, 1))
+    numOfFrames = np.asarray(np.floor((L - window_length) / frame_step) + 1, dtype=int)
+    Energy_frame = np.zeros((numOfFrames, 1))
     for i in range(numOfFrames):
-        window = signal[int(curPos):int(curPos + windowLength - 1)]
-        E[i] = (1 / (windowLength)) * np.sum(np.abs(window ** 2))
-        curPos = curPos + step
-    return E
+        window = signal[int(curPos):int(curPos + window_length - 1)]
+        Energy_frame[i] = (1 / (window_length)) * np.sum(np.abs(window ** 2))
+        curPos = curPos + frame_step
+    return Energy_frame
 
 
-def Calculate_Spectral_Centroid(signal, windowLength, step, fs):
+def Calculate_Spectral_Centroid(signal, window_length, frame_step, fs):
     """
     计算谱质心
     Parameters
     ----------
     signal : 原始信号.
-    windowLength : 帧长.
-    step : 帧移.
+    window_length : 帧长.
+    frame_step : 帧移.
     fs : 采样率.
 
     Returns
@@ -49,54 +49,54 @@ def Calculate_Spectral_Centroid(signal, windowLength, step, fs):
     signal = signal / np.max(signal)  # 归一化
     curPos = 0
     L = len(signal)
-    numOfFrames = np.asarray(np.floor((L - windowLength) / step) + 1, dtype=int)
-    H = np.hamming(windowLength)
-    m = ((fs / (2 * windowLength)) * np.arange(1, windowLength, 1)).T
+    numOfFrames = np.asarray(np.floor((L - window_length) / frame_step) + 1, dtype=int)
+    H = np.hamming(window_length)
+    m = ((fs / (2 * window_length)) * np.arange(1, window_length, 1)).T
     C = np.zeros((numOfFrames, 1))
     for i in range(numOfFrames):
-        window = H * (signal[int(curPos): int(curPos + windowLength)])
-        FFT = np.abs(np.fft.fft(window, 2 * int(windowLength)))
-        FFT = FFT[1: windowLength]
+        window = H * (signal[int(curPos): int(curPos + window_length)])
+        FFT = np.abs(np.fft.fft(window, 2 * int(window_length)))
+        FFT = FFT[1: window_length]
         FFT = FFT / np.max(FFT)
         C[i] = np.sum(m * FFT) / np.sum(FFT)
         if np.sum(window ** 2) < 0.010:
             C[i] = 0.0
-        curPos = curPos + step;
+        curPos = curPos + frame_step;
     C = C / (fs / 2)
     return C
 
 
-def find_local_Maxima(f, step):
+def find_local_Maxima(f, frame_step):
     """
     寻找局部最大值
     Parameters
     ----------
     f : 输入序列.
-    step : 搜寻窗长.
+    frame_step : 搜寻窗长.
 
     Returns
     -------
     Maxima : 最大值索引 最大值
     countMaxima : 最大值的数量
     """
-    # STEP 1: 寻找最大值
+    # frame_step 1: 寻找最大值
     countMaxima = 0
     Maxima = []
-    for i in range(len(f) - step - 1):  # 对于序列中的每一个元素:
-        if i >= step:
-            if (np.mean(f[i - step: i]) < f[i]) and (np.mean(f[i + 1: i + step + 1]) < f[i]):
-                # IF the current element is larger than its neighbors (2*step window)
+    for i in range(len(f) - frame_step - 1):  # 对于序列中的每一个元素:
+        if i >= frame_step:
+            if (np.mean(f[i - frame_step: i]) < f[i]) and (np.mean(f[i + 1: i + frame_step + 1]) < f[i]):
+                # IF the current element is larger than its neighbors (2*frame_step window)
                 # --> keep maximum:
                 countMaxima = countMaxima + 1
                 Maxima.append([i, f[i]])
         else:
-            if (np.mean(f[0: i + 1]) <= f[i]) and (np.mean(f[i + 1: i + step + 1]) < f[i]):
-                # IF the current element is larger than its neighbors (2*step window)
+            if (np.mean(f[0: i + 1]) <= f[i]) and (np.mean(f[i + 1: i + frame_step + 1]) < f[i]):
+                # IF the current element is larger than its neighbors (2*frame_step window)
                 # --> keep maximum:
                 countMaxima = countMaxima + 1
                 Maxima.append([i, f[i]])
 
-    # STEP 2: 对最大值进行进一步处理
+    # frame_step 2: 对最大值进行进一步处理
     MaximaNew = []
     countNewMaxima = 0
     i = 0
@@ -111,7 +111,7 @@ def find_local_Maxima(f, step):
         i = i + 1
 
         # search for "neighbourh maxima":
-        while (i < countMaxima) and (Maxima[i][0] - tempMax[len(tempMax) - 1] < step / 2):
+        while (i < countMaxima) and (Maxima[i][0] - tempMax[len(tempMax) - 1] < frame_step / 2):
             tempMax.append(Maxima[i][0])
             tempVals.append(Maxima[i][1])
             i = i + 1
@@ -130,9 +130,9 @@ def find_local_Maxima(f, step):
 
 def VAD_demo(signal, fs):
     win = 0.05
-    step = 0.05
-    Eor = Short_Time_Energy(signal, int(win * fs), int(step * fs));
-    Cor = Calculate_Spectral_Centroid(signal, int(win * fs), int(step * fs), fs);
+    frame_step = 0.05
+    Eor = Short_Time_Energy(signal, int(win * fs), int(frame_step * fs));
+    Cor = Calculate_Spectral_Centroid(signal, int(win * fs), int(frame_step * fs), fs);
     E = scipy.signal.medfilt(Eor[:, 0], 5)
     E = scipy.signal.medfilt(E, 5)
     C = scipy.signal.medfilt(Cor[:, 0], 5)
@@ -175,14 +175,14 @@ def VAD_demo(signal, fs):
         countTemp = 1
         while (flags[count - 1] == 1) and (count < len(flags)):
             if countTemp == 1:  # 如果是该语音段的第一帧
-                Limit1 = np.round((count - 1) * step * fs) + 1  # 设置该语音段的开始边界
+                Limit1 = np.round((count - 1) * frame_step * fs) + 1  # 设置该语音段的开始边界
                 if Limit1 < 1:
                     Limit1 = 1
             count = count + 1  # 计数器加一
             countTemp = countTemp + 1  # 当前语音段的计数器加一
 
         if countTemp > 1:  # 如果当前循环中有语音段
-            Limit2 = np.round((count - 1) * step * fs)  # 设置该语音段的结束边界
+            Limit2 = np.round((count - 1) * frame_step * fs)  # 设置该语音段的结束边界
             if Limit2 > len(signal):
                 Limit2 = len(signal)
             # 将该语音段的首尾位置加入到segments的最后一行
