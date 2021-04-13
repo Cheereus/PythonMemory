@@ -33,7 +33,7 @@ print(data.shape)
 # 窗口大小
 window_size = 500000
 
-f = open('data/result_chr.txt', 'a')
+f = open('../Application/data/result_chr.txt', 'a')
 
 # 这里偷懒了，应该先按染色体把原数据分开再分别遍历的
 for i in range(1, 20):

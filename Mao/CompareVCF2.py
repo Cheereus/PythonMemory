@@ -1,8 +1,8 @@
 import vcf
 
 # 读取文件
-real_reader = vcf.Reader(filename='data/DD_gt_real_impute.vcf')
-generate_reader = vcf.Reader(filename='data/DD_MOLO3.0_gt_impute.vcf')
+real_reader = vcf.Reader(filename='../Application/data/DD_gt_real_impute_1.vcf')
+generate_reader = vcf.Reader(filename='../Application/data/DD_MOLO3.0_gt_impute.vcf')
 
 
 # 获取基因型
@@ -22,12 +22,16 @@ def get_gene_type(REF, ALT, VALUE):
 
 
 # 每次运行会在文件内追加，所以要记得把上次的运行结果重命名一下
-f = open('data/outputs.txt', 'a')
+f = open('../Application/data/outputs.txt', 'a')
 
 # 行计数，总数，一致数
 row = 0
 n_samples = 0
 all_acc = 0
+
+# 按列计数
+accuracy = []
+col = 0
 
 for real, generate in zip(real_reader, generate_reader):
 
@@ -35,6 +39,7 @@ for real, generate in zip(real_reader, generate_reader):
     if row == 0:
         headline = ['CHROM', 'POS', 'ID']
         headline += [i.sample for i in real.samples]
+        accuracy = [0 for i in real.samples]
         headline += ['ACC']
         f.writelines(' '.join(headline) + '\n')
 
@@ -53,12 +58,18 @@ for real, generate in zip(real_reader, generate_reader):
         n_line_samples += 1
         n_samples += 1
 
-        if real_gene_type == generate_gene_type:
+        if real_gene_type == generate_gene_type or real_gene_type == generate_gene_type[::-1]:
             result.append('1')
             line_acc += 1
             all_acc += 1
+            accuracy[col] += 1
         else:
             result.append('0')
+
+        # 列进一
+        col += 1
+
+    col = 0
 
     result.append(str(line_acc / n_line_samples))
 
@@ -66,6 +77,11 @@ for real, generate in zip(real_reader, generate_reader):
     row += 1
     # 观察进度
     print('row', row, 'finished')
+
+
+# 给准确率这行前面加三个词来保持工整
+accuracy = ['ACC', 'PER', 'COL'] + [str(round(i / row, 4)) for i in accuracy]
+f.writelines(' '.join(accuracy) + '\n')
 
 f.close()
 

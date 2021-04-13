@@ -4,8 +4,8 @@ import numpy as np
 import math
 
 # 读取文件
-real_reader = vcf.Reader(filename='data/DD_gt_real_impute_1.vcf')
-generate_reader = vcf.Reader(filename='data/DD_MOLO3.0_gt_impute.vcf')
+real_reader = vcf.Reader(filename='../Application/data/DD_gt_real_impute_1.vcf')
+generate_reader = vcf.Reader(filename='../Application/data/DD_MOLO3.0_gt_impute.vcf')
 
 
 # 获取基因型

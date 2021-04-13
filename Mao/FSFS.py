@@ -26,13 +26,13 @@ def read_from_txt(filePath, head=True):
 # get SNPs by chromosomes:
 def get_snp():
     print('Loading snp data...')
-    SNPs = read_from_txt('data/CFJY_YY_LD.txt', head=True)
+    SNPs = read_from_txt('../Application/data/CFJY_YY_LD.txt', head=True)
     snp_by_chromosome = [[] for _ in range(19)]
     for item in SNPs:
         chromosome = int(item[0])
         snp_by_chromosome[chromosome - 1].append(item)
 
-    joblib.dump(snp_by_chromosome, 'data/snp_by_chromosome.pkl')
+    joblib.dump(snp_by_chromosome, '../Application/data/snp_by_chromosome.pkl')
 
     return snp_by_chromosome
 
@@ -40,13 +40,13 @@ def get_snp():
 # get SNP maps by chromosomes:
 def get_map():
     print('Loading map data...')
-    snp_map = read_from_txt('data/CFJY_YY_map.txt', head=False)
+    snp_map = read_from_txt('../Application/data/CFJY_YY_map.txt', head=False)
     snp_map_by_chromosome = [[] for _ in range(19)]
     for item in snp_map:
         chromosome = int(item[0])
         snp_map_by_chromosome[chromosome - 1].append(item[1])
 
-    joblib.dump(snp_map_by_chromosome, 'data/snp_map_by_chromosome.pkl')
+    joblib.dump(snp_map_by_chromosome, '../Application/data/snp_map_by_chromosome.pkl')
 
     return snp_map_by_chromosome
 
@@ -68,8 +68,8 @@ def calc_similarity(SNPs, snp_map):
 
 def calc_similarity_by_chromosome():
     print('Loading chromosome data...')
-    snp_map_chromosome = joblib.load('data/snp_map_by_chromosome.pkl')
-    snp_chromosome = joblib.load('data/snp_by_chromosome.pkl')
+    snp_map_chromosome = joblib.load('../Application/data/snp_map_by_chromosome.pkl')
+    snp_chromosome = joblib.load('../Application/data/snp_by_chromosome.pkl')
     print('Calculating similarity by chromosome...')
     similarity_by_chromosome = []
 
@@ -79,7 +79,7 @@ def calc_similarity_by_chromosome():
         print(similarity_matrix.shape)
         similarity_by_chromosome.append(similarity_matrix)
 
-    joblib.dump(similarity_by_chromosome, 'data/similarity_by_chromosome.pkl')
+    joblib.dump(similarity_by_chromosome, '../Application/data/similarity_by_chromosome.pkl')
 
     return similarity_by_chromosome
 
@@ -166,8 +166,8 @@ def FSFS(similarity, snp_map, chr_num, k=5):
 
 # 开始 FSFS
 print('Loading data...')
-sim_by_chr = joblib.load('data/similarity_by_chromosome.pkl')
-snp_map_by_chr = joblib.load('data/snp_map_by_chromosome.pkl')
+sim_by_chr = joblib.load('../Application/data/similarity_by_chromosome.pkl')
+snp_map_by_chr = joblib.load('../Application/data/snp_map_by_chromosome.pkl')
 
 R_by_chr = []
 theta_by_chr = []
@@ -182,7 +182,7 @@ for j in range(19):
     theta_by_chr.append(theta_i)
 
 # 输出各染色体子集大小 并写入文件
-f_result = open('data/result_FSFS.txt', 'a')
+f_result = open('../Application/data/result_FSFS.txt', 'a')
 for j in range(19):
     print('R', j, ':', len(R_by_chr[j]), theta_by_chr[j])
     for m in R_by_chr[j]:

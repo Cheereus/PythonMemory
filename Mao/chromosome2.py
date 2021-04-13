@@ -16,7 +16,7 @@ def read_from_txt(filePath):
     return array_data
 
 
-data = read_from_txt('data/CFJY_YY_LD.txt')
+data = read_from_txt('../Application/data/CFJY_YY_LD.txt')
 
 # 窗口大小
 window_size = 1000000
@@ -31,7 +31,7 @@ b_num = 0
 # 计数君
 t = 1
 
-f = open('data/result_chr.txt', 'a')
+f = open('../Application/data/result_chr.txt', 'a')
 
 for item in data:
 
