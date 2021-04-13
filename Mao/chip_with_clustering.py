@@ -3,8 +3,12 @@ from tqdm import trange
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture
 
+# 改成在开头设置文件，方便改，毛毛就不用跑到代码里找了
+input_file = 'DDLLYYMAF.txt'
+output_file = 'result.txt'
 
-# Read data from `.txt` file
+
+# 根据染色体号从文件中读取，是个笨方法
 def read_from_txt(filePath, chr=1):
     f = open(filePath)
     line = f.readline()
@@ -18,29 +22,31 @@ def read_from_txt(filePath, chr=1):
     array_data = np.array(data_list)
     return array_data
 
-N_list = [40,20,18,18,14,19,16,18,19,9,11,7,27,19,19,11,8,7]
+
+# 位点数目，自动考虑开头结尾
+N_list = [259, 133, 118, 117, 90, 129, 110, 121, 126, 63, 72, 50, 179, 126, 129, 71, 57, 50]
 N_list = [_ - 2 for _ in N_list]
-# print(max_score_list)
-f = open('result.txt', 'a')
-for chr_id in range(1, 19):
-    data = read_from_txt('DDLLYYMAF.txt', chr=chr_id)
+out_f = open(output_file, 'a')
+
+
+# 开始，增加进度条方便暗中观察 -.-
+for chr_id in trange(1, 19):
+    data = read_from_txt(input_file, chr=chr_id)
 
     N = N_list[chr_id - 1]
     first = data[0]
     last = data[-1]
-    f.writelines(' '.join(first) + '\n')
+    out_f.writelines(' '.join(first) + '\n')
     # GMM = GaussianMixture(n_components=N, random_state=0).fit(data[:, -1].reshape((-1,1)))
     # labels = GMM.predict(data[:, -1].reshape((-1,1)))
-    km = KMeans(n_clusters=N, random_state=0).fit(data[1:-1, -1].reshape((-1,1)))
+    km = KMeans(n_clusters=N, random_state=0).fit(data[1:-1, -1].reshape((-1, 1)))
     labels = km.labels_
-    # print(min(labels), max(labels))
     max_score_list = [[]] * N
     for i in range(N):
         group = []
         for j in range(len(labels)):
             if labels[j] == i:
                 group.append(data[1:-1][j])
-        # print(i, [_ for _ in labels if _ == i])
         tmp_max = group[0]
         for gene in group:
             if gene[2] > tmp_max[2]:
@@ -51,10 +57,11 @@ for chr_id in range(1, 19):
     a = [int(_) for _ in max_score_list[:, 3].T]
     a = np.array(a)
     max_score_list = max_score_list[np.argsort(a), :]
-    print(max_score_list)
     for max_score in max_score_list:
         max_score = [str(i) for i in max_score]
-        f.writelines(' '.join(max_score) + '\n')
-    f.writelines(' '.join(last) + '\n')
+        out_f.writelines(' '.join(max_score) + '\n')
+    out_f.writelines(' '.join(last) + '\n')
 
-f.close()
+out_f.close()
+
+# daisuki
