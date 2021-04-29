@@ -75,3 +75,4 @@ def draw_scatter3d(x, y, z, labels, colors):
 
     plt.legend(loc='best')
     plt.show()
+
