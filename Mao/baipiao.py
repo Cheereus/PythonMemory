@@ -1,11 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+methods = ['SE', 'CR', 'CC']
+
+y_lim_start = {'SE': 0, 'CR': 0.8, 'CC': 0.4}
+y_lim_end = {'SE': 3000, 'CR': 1.0, 'CC': 0.9}
+
 data_types = ['DD', 'LL', 'YY']
 
 default_colors = [[138/256, 158/256, 202/256], [246/256, 140/256, 99/256], [98/256, 194/256, 164/256]]
 
-label_dict = {'DD': 'Duroc', 'LL': 'Landrace', 'YY': 'Yorkshire'}
+label_dict = {'DD': 'Duroc', 'LL': 'Landrace', 'YY': 'Yorkshire', 'SE': 'Shanon Entropy', 'CR': 'Concordance Rate', 'CC': 'Correlation Coefficient'}
 
 
 def read_from_txt(filePath, head=False):
@@ -26,14 +31,14 @@ def read_from_txt(filePath, head=False):
     return array_data
 
 
+method = 'CR'
+
 fig = plt.figure(figsize=(15, 75))
 
 for i in range(len(data_types)):
-    data = read_from_txt('data/data_' + data_types[i] + '.txt')
+    data = read_from_txt('data/data_' + method + '_' + data_types[i] + '.txt')
 
     x = ['300', '500', '800', '1k', '1.5k', '2k', '3k']
-
-    print(data)
 
     plt.subplot(1, 3, i+1)
     plt.rcParams['font.sans-serif'] = ['Times New Roman']
@@ -44,15 +49,15 @@ for i in range(len(data_types)):
     l3 = plt.plot(x, data[:, 2], 'b-.', label='Method 3', marker='^', color=default_colors[i])
 
     if i == 0:
-        plt.ylabel('Concordance Rate', fontsize=15)
+        plt.ylabel(label_dict[method], fontsize=15)
     plt.xlabel('Number of SNPs in LD panel', fontsize=15)
-
+    plt.title(label_dict[data_types[i]], fontsize=15)
     plt.grid(alpha=0.3)
     plt.legend(fontsize=15)
-    plt.ylim(0.8, 1.0)
+    plt.ylim(y_lim_start[method], y_lim_end[method])
 plt.show()
 
 # 文章中需要用到矢量图
-fig.savefig('images/baipiao_CR.svg', dpi=600, format='svg', bbox_inches='tight')
+fig.savefig('images/baipiao_' + method + '.svg', dpi=600, format='svg', bbox_inches='tight')
 # 普通图片
-fig.savefig('images/baipiao_CR.png')
+fig.savefig('images/baipiao_' + method + '.png')
