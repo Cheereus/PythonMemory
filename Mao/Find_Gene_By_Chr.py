@@ -5,6 +5,7 @@ import time
 
 
 def find_gene(gene_list, chr_):
+    print('Loading database of chr', chr_)
     database = joblib.load('database/Chr' + chr_ + '.pkl')
     database = np.array([list(map(str, line.split())) for line in database])
     positions = database[:, 1]
@@ -14,14 +15,14 @@ def find_gene(gene_list, chr_):
     time.sleep(1)
     found = 0
     for i in trange(gene_len):
-        c, p = gene_list[i]
+        c, p, id_u = gene_list[i]
         chr_idx = np.argwhere(positions == p)
         if chr_idx.size > 0:
             found += 1
             chr_idx = chr_idx[0][0]
-            result_list.append(database[chr_idx, :])
+            result_list.append(['chr' + c, p, id_u] + [database[chr_idx, 2], database[chr_idx, 3], database[chr_idx, 4]])
         else:
-            result_list.append(['chr' + c, p])
+            result_list.append(['chr' + c, p, id_u])
     print('Found', found, 'in chr', chr_)
     time.sleep(1)
     return result_list
