@@ -4,11 +4,11 @@ import numpy as np
 import time
 
 
-def find_gene(gene_list, chr_):
+def find_gene(gene_list, chr_, key_id=1):
     print('Loading database of chr', chr_)
     database = joblib.load('database/Chr' + chr_ + '.pkl')
     database = np.array([list(map(str, line.split())) for line in database])
-    positions = database[:, 1]
+    positions = database[:, key_id]
     gene_len = len(gene_list)
     result_list = []
     print('Start finding in chr', chr_)
@@ -16,7 +16,12 @@ def find_gene(gene_list, chr_):
     found = 0
     for i in trange(gene_len):
         c, p, id_u = gene_list[i]
-        chr_idx = np.argwhere(positions == p)
+        search_key = ''
+        if key_id == 1:
+            search_key = p
+        if key_id == 2:
+            search_key = id_u.split('-')[1]
+        chr_idx = np.argwhere(positions == search_key)
         if chr_idx.size > 0:
             found += 1
             chr_idx = chr_idx[0][0]
