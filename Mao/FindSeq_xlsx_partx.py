@@ -5,12 +5,12 @@ from tqdm import trange
 import xlrd
 
 
-source = 'part4.xlsx'
-target = 'part4_result.txt'
+source = 'partx.xlsx'
+target = 'partx_result.txt'
 
 x1 = xlrd.open_workbook(source)
 sheet = x1.sheets()
-LATINS, IDS, SPES, CHRS, POSES, REFS, ALTS = sheet[0].col_values(0), sheet[0].col_values(1), sheet[0].col_values(2), sheet[0].col_values(4), sheet[0].col_values(5), sheet[0].col_values(10), sheet[0].col_values(11)
+LATINS, IDS, SPES, CHRS, POSES, REFS, ALTS = sheet[0].col_values(0), sheet[0].col_values(1), sheet[0].col_values(2), sheet[0].col_values(3), sheet[0].col_values(4), sheet[0].col_values(9), sheet[0].col_values(10)
 
 CHRS = [str(i).split('.')[0] for i in CHRS]
 result_lines = []
