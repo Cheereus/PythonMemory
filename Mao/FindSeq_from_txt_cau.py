@@ -4,8 +4,8 @@ import subprocess
 from tqdm import trange
 
 
-source = 'result_NQ_11_1.txt'
-target = 'result_NQ_Seq.txt'
+source = 'result_cau_qc_11_1.txt'
+target = 'result_cau_qc_11_1_seq.txt'
 
 f = open(source)
 lines = f.readlines()
