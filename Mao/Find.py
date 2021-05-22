@@ -29,4 +29,4 @@ def find_gene_of_txt(origin, target, withHead):
 
 
 if __name__ == '__main__':
-    find_gene_of_txt('neo_qc_11_1.txt', 'result_neo_qc_11_1.txt', withHead=False)
+    find_gene_of_txt('q.txt', 'result_q.txt', withHead=False)
