@@ -2,14 +2,19 @@ import xlrd
 import numpy
 from tqdm import trange
 
-x1 = xlrd.open_workbook('quchong2.xlsx')
+x1 = xlrd.open_workbook('quchong3.xlsx')
 sheet = x1.sheets()[2]
 
 d = []
 for r in trange(5, sheet.nrows):
     data1 = []
     for c in range(sheet.ncols):
-        data1.append(sheet.cell_value(r, c))
+        cell_value = str(sheet.cell_value(r, c))
+        if len(cell_value) > 0:
+            data1.append(cell_value)
+        else:
+            data1.append('-')
+
     d.append(list(data1))
 
 d = numpy.array(d)
@@ -27,6 +32,6 @@ result_list = numpy.array(result_list)
 
 print(result_list.shape)
 
-output = open('result_quchong2.txt', 'a')
+output = open('result_quchong3.txt', 'a')
 for result in result_list:
     output.writelines(' '.join(result) + '\n')
