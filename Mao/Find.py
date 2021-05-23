@@ -21,7 +21,7 @@ def find_gene_of_txt(origin, target, withHead):
     # print(cd.keys())
     output = open(target, 'a')
     for key in cd.keys():
-        result_list = find_gene(cd[key], key, 1)
+        result_list = find_gene(cd[key], key, 2)
         for result in result_list:
             output.writelines(' '.join(result) + '\n')
 
@@ -29,4 +29,4 @@ def find_gene_of_txt(origin, target, withHead):
 
 
 if __name__ == '__main__':
-    find_gene_of_txt('q.txt', 'result_q.txt', withHead=False)
+    find_gene_of_txt('rs.txt', 'result_rs.txt', withHead=False)
