@@ -1,7 +1,7 @@
 import numpy
 from tqdm import trange
 
-f = open('result_quchong3.txt', encoding='utf-8')
+f = open('quchong0525.txt', encoding='utf-8')
 lines = f.readlines()
 count = {}
 result_list = []
@@ -20,6 +20,6 @@ for i in trange(len(lines)):
 
 print(count)
 print(len(result_list))
-output = open('quchong3_int.txt', 'a', encoding='utf-8')
+output = open('quchong0525_int.txt', 'a', encoding='utf-8')
 for result in result_list:
     output.writelines(' '.join(result) + '\n')

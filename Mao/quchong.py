@@ -2,7 +2,7 @@ import xlrd
 import numpy
 from tqdm import trange
 
-x1 = xlrd.open_workbook('quchong3.xlsx')
+x1 = xlrd.open_workbook('100K_SNP 0525.xlsx')
 sheet = x1.sheets()[2]
 
 d = []
@@ -32,6 +32,6 @@ result_list = numpy.array(result_list)
 
 print(result_list.shape)
 
-output = open('result_quchong3.txt', 'a')
+output = open('quchong0525.txt', 'w', encoding='utf-8')
 for result in result_list:
     output.writelines(' '.join(result) + '\n')

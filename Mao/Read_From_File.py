@@ -14,19 +14,19 @@ def read_genes_by_chr_txt(txtPath, withHead=False):
     for i in range(len(lines)):
         line = list(map(str, lines[i].split()))
         # print(line)
-        chr_id = str(line[1])
+        chr_id = str(line[0])
         if len(chr_id) > 3:
             continue
         Chr.append(chr_id)
-        POS.append(str(line[0]))
-
+        POS.append(str(line[1]))
+        #
         # if len(line) == 3:
         #     ID_U.append('')
         #     TRAITS.append(line[2])
         #
         # else:
-        #     ID_U.append(line[2])
-        #     TRAITS.append(line[3])
+        ID_U.append(line[2])
+        # TRAITS.append(line[3])
 
     count_result = Counter(Chr)
     chromosomes = count_result.keys()
@@ -35,12 +35,12 @@ def read_genes_by_chr_txt(txtPath, withHead=False):
     for chr_ in chromosomes:
         chr_dict[chr_] = []
     for i in range(len(Chr)):
-        # c, p, id_u, tr = Chr[i], POS[i], ID_U[i], TRAITS[i]
+        c, p, id_u = Chr[i], POS[i], ID_U[i]
         c, p = Chr[i], POS[i]
         for chr_ in chromosomes:
             if c == chr_:
-                # chr_dict[chr_].append([c, p, id_u, tr])
-                chr_dict[chr_].append([c, p])
+                chr_dict[chr_].append([c, p, id_u])
+                # chr_dict[chr_].append([c, p])
                 break
     return chr_dict
 
