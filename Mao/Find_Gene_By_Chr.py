@@ -16,8 +16,8 @@ def find_gene(gene_list, chr_, key_id=1):
     time.sleep(1)
     found = 0
     for i in trange(gene_len):
-        c, p, id_u = gene_list[i]
-        # c, p = gene_list[i]
+        # c, p, id_u = gene_list[i]
+        c, p = gene_list[i]
         # if key_id == 1:
         #     search_key = p
         # if key_id == 2:
@@ -27,11 +27,11 @@ def find_gene(gene_list, chr_, key_id=1):
         if chr_idx.size > 0:
             found += 1
             chr_idx = chr_idx[0][0]
-            result_list.append(['chr' + c, p, id_u] + [database[chr_idx, 2], database[chr_idx, 3], database[chr_idx, 4]])
-            # result_list.append(['chr' + c, p] + [database[chr_idx, 1], database[chr_idx, 3], database[chr_idx, 4]])
+            # result_list.append(['chr' + c, p, id_u] + [database[chr_idx, 2], database[chr_idx, 3], database[chr_idx, 4]])
+            result_list.append(['chr' + c, p] + [database[chr_idx, 2], database[chr_idx, 3], database[chr_idx, 4]])
         else:
-            result_list.append(['chr' + c, p, id_u])
-            # result_list.append(['chr' + c, p])
+            # result_list.append(['chr' + c, p, id_u])
+            result_list.append(['chr' + c, p])
     print('Found', found, 'in chr', chr_)
     time.sleep(1)
     return result_list

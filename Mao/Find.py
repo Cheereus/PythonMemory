@@ -19,7 +19,7 @@ def find_gene_of_txt(origin, target, withHead):
 
     cd = read_genes_by_chr_txt(origin, withHead=withHead)
     # print(cd.keys())
-    output = open(target, 'a')
+    output = open(target, 'w')
     for key in cd.keys():
         result_list = find_gene(cd[key], key, 1)
         for result in result_list:
@@ -29,4 +29,4 @@ def find_gene_of_txt(origin, target, withHead):
 
 
 if __name__ == '__main__':
-    find_gene_of_txt('zx_qc_11_1.txt', 'result_zx_qc.txt', withHead=False)
+    find_gene_of_txt('result/CHR_ALL.txt', 'result_CHR_ALL.txt', withHead=False)
