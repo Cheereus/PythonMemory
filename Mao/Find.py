@@ -19,7 +19,7 @@ def find_gene_of_txt(origin, target, withHead):
 
     cd = read_genes_by_chr_txt(origin, withHead=withHead)
     # print(cd.keys())
-    output = open(target, 'w')
+    output = open(target, 'w', encoding='utf-8')
     for key in cd.keys():
         result_list = find_gene(cd[key], key, 1)
         for result in result_list:
@@ -29,4 +29,4 @@ def find_gene_of_txt(origin, target, withHead):
 
 
 if __name__ == '__main__':
-    find_gene_of_txt('result/CHR_ALL.txt', 'result_CHR_ALL.txt', withHead=False)
+    find_gene_of_txt('seq_refind.txt', 'result_seq_refind.txt', withHead=False)
