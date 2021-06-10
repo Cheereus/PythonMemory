@@ -22,7 +22,7 @@ def find_min_dis_two(start, end, point_list, W):
     return dis_list_sorted[-1][0], dis_list_sorted[-1][1]
 
 
-window_nums = [11620, 8050, 6988, 7028, 5421, 8581, 6935, 7458, 7521, 4313, 4202, 3567, 10104, 7706, 7019, 4414, 3660, 3127]
+window_nums = [40]
 
 # window_size = [23430, 19360, 19488, 19452, 19797, 21105, 18897, 18920, 19361, 17241, 18972, 18045, 21158, 19882, 19275,
 #                18838, 18931, 18743]
@@ -33,10 +33,10 @@ nums_more = []
 quchong_total = 0
 database_total = 0
 
-for c in range(1, 19):
+for c in range(1):
 
     # c = 18
-    f = open('data/data_chr' + str(c) + '.txt', encoding='utf-8')
+    f = open('data/Y_pos.txt', encoding='utf-8')
     lines = f.readlines()
     data = []
     line_id = 1

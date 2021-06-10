@@ -2,11 +2,11 @@ import xlrd
 import numpy
 from tqdm import trange
 
-x1 = xlrd.open_workbook('100K_SNP 0525.xlsx')
-sheet = x1.sheets()[2]
+x1 = xlrd.open_workbook('SexChr.xlsx')
+sheet = x1.sheets()[0]
 
 d = []
-for r in trange(5, sheet.nrows):
+for r in trange(sheet.nrows):
     data1 = []
     for c in range(sheet.ncols):
         cell_value = str(sheet.cell_value(r, c))
@@ -32,6 +32,6 @@ result_list = numpy.array(result_list)
 
 print(result_list.shape)
 
-output = open('quchong0525.txt', 'w', encoding='utf-8')
+output = open('quchong_sex.txt', 'w', encoding='utf-8')
 for result in result_list:
     output.writelines(' '.join(result) + '\n')

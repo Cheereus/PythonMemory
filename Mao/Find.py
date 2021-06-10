@@ -29,4 +29,4 @@ def find_gene_of_txt(origin, target, withHead):
 
 
 if __name__ == '__main__':
-    find_gene_of_txt('seq_refind.txt', 'result_seq_refind.txt', withHead=False)
+    find_gene_of_txt('quchong_sex_int.txt', 'sex_find.txt', withHead=False)

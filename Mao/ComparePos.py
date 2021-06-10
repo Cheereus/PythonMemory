@@ -2,7 +2,8 @@ from tqdm import trange
 import numpy as np
 import time
 
-Chr = list(range(1, 23)) + ['X', 'Y', 'MT']
+Chr = list(range(1, 23)) + ['X', 'Y',]
+total_counts = 0
 
 for c in Chr:
 
@@ -45,11 +46,11 @@ for c in Chr:
 
     asa_out.close()
     xinyun_out.close()
-
+    total_counts += counts
     print('Same Pos', counts)
     print('------------------')
 
-
+print('Total counts', total_counts)
 
 
 
