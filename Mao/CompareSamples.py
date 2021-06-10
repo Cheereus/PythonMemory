@@ -31,6 +31,7 @@ Reverse_dict = {
 for i in range(1, 17):
     print('Comparing', i)
     output = open('SamePos/Sample_' + str(i) + '.txt', 'w', encoding='utf-8')
+    output.writelines(' '.join(['asa_id', 'xinyun_id', 'chr', 'pos', 'asa-genotype', 'xinyun-genotype', 'same']) + '\n')
     total = 0
     count = 0
     time.sleep(0.5)
@@ -38,28 +39,29 @@ for i in range(1, 17):
         xinyun = data_xinyun[j]
         asa = data_asa[j]
         # print(xinyun[0:1], xinyun[1].split(':'))
-        result = [xinyun[0], xinyun[1].split(':')[0], xinyun[1].split(':')[1]]
+        result = [asa[3], xinyun[0], xinyun[1].split(':')[0], xinyun[1].split(':')[1]]
         if i == 16:
             xinyun[i + 1] = xinyun[i + 1][:-1]
         if len(xinyun[i + 1]) == 1:
             xinyun[i + 1] = xinyun[i + 1] + xinyun[i + 1]
         if len(asa[i + 3]) == 1:
-            asa[i] = asa[i] + asa[i + 3]
-
+            asa[i + 3] = asa[i + 3] + asa[i + 3]
+        result.append(xinyun[i + 1])
+        result.append(asa[i + 3])
         if len(xinyun[i + 1] + asa[i + 3]) == 4 and '-' not in xinyun[i + 1] + asa[i + 3] and 'I' not in xinyun[i + 1] + asa[i + 3] and 'D' not in xinyun[i + 1] + asa[i + 3]:
             total += 1
-            if asa[0] == 'MINUS' or asa[0] == 'BOT':
-                tmp = ''
-                for p in asa[i + 3]:
-                    tmp += Reverse_dict[p]
-                asa[i + 3] = tmp
+            # if asa[0] == 'MINUS' or asa[0] == 'BOT':
+            #     tmp = ''
+            #     for p in asa[i + 3]:
+            #         tmp += Reverse_dict[p]
+            #     asa[i + 3] = tmp
 
-            if xinyun[i + 1] == asa[i + 3]:
+            if xinyun[i + 1] == asa[i + 3] or xinyun[i + 1] == asa[i + 3][::-1]:
                 count += 1
                 result.append('T')
             else:
                 result.append('F')
-        if len(result) == 4:
+        if len(result) == 7:
             output.writelines(' '.join(result) + '\n')
 
     output.close()
