@@ -2,13 +2,13 @@ from tqdm import trange
 import numpy as np
 import time
 
-f = open('xinyun.csv', encoding='utf-8')
-lines = f.readlines()[1:]
+f = open('temp/NewXinyun.txt', encoding='utf-8')
+lines = f.readlines()
 f.close()
 data_xinyun = []
 for i in trange(len(lines)):
-    line = list(map(str, lines[i][:-1].split(',')))
-    data_xinyun.append(line[0:1] + [line[1] + ':' + line[2]] + line[3:])
+    line = list(map(str, lines[i].split(',')))
+    data_xinyun.append([line[1] + ':' + line[2].split('.')[0]] + line[3:])
 data_xinyun = np.array(data_xinyun)
 # xinyun_pos_name = data_xinyun[:, 0]
 # xinyun_chr_pos = data_xinyun[:, 1]
@@ -18,8 +18,9 @@ lines = f.readlines()
 f.close()
 data_asa = []
 for i in trange(len(lines)):
-    line = list(map(str, lines[i].split(',')))
-    data_asa.append(line)
+    if 'UU' not in lines[i] and 'DD' not in lines[i] and 'II' not in lines[i]:
+        line = list(map(str, lines[i].split(',')))
+        data_asa.append(line)
 data_asa = np.array(data_asa)
 # print(data_asa.shape)
 name_pos = {}
@@ -35,7 +36,7 @@ count1 = 0
 count2 = 0
 counts = 0
 for i in trange(data_xinyun.shape[0]):
-    pos_name, chr_pos = data_xinyun[i][0], data_xinyun[i][1]
+    chr_pos = data_xinyun[i][0]
     pos_idx = -1
 
     if chr_pos in name_pos:
@@ -45,7 +46,7 @@ for i in trange(data_xinyun.shape[0]):
     else:
         pass
     if pos_idx >= 0:
-        xinyun_out.writelines(','.join(data_xinyun[i]) + '\n')
+        xinyun_out.writelines(','.join(data_xinyun[i]))
         asa_out.writelines(','.join(data_asa[pos_idx]))
 xinyun_out.close()
 asa_out.close()
