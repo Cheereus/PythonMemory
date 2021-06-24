@@ -8,3 +8,4 @@ dist/
 *.spec
 *.txt
 *.xlsx
+*.tab

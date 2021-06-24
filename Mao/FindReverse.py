@@ -42,26 +42,63 @@ SNP_DICT = {
     'G': 'C',
 }
 reverse_list = [['chromosome', '0_idx_position', 'snp_name', 'genetic_distance', 'allele_1', 'allele_2', 'reference', 'reference_rev', 'strand']]
-hubu = []
+# hubu = []
 
 for i in trange(len(result_list)):
+    strand = 'ambiguous'
     ID, CHR, POS, A1, A2, DIS = result_list[i]
-    A = A1 + A2
-    if '0' not in A and SNP_DICT[A1] == A2:
-        hubu.append(result_list[i])
+    # if '0' not in A and SNP_DICT[A1] == A2:
+    #     hubu.append(result_list[i])
     status, output = subprocess.getstatusoutput('samtools faidx /home/liujf/WORKSPACE/duh/10_2/reference/pig.fa chr' + CHR + ':' + str(POS) + '-' + str(POS))
 
     if status == 0:
+        A1_ = '' + A1
+        A2_ = '' + A2
         X = ''.join(output.split('\n')[1:])
-        if X in A and SNP_DICT[X] not in A:
-            reverse_list.append([CHR, POS, ID, DIS, A1, A2, X, SNP_DICT[X], 'forward'])
+
+        # 两个位点都是0：ambiguous
+        if A1_ == '0' and A2_ == '0':
+            strand = 'ambiguous'
         else:
-            reverse_list.append([CHR, POS, ID, DIS, A1, A2, X, SNP_DICT[X], 'reverse'])
-    else:
-        reverse_list.append([CHR, POS, ID, DIS, A1, A2, '', '', 'ambiguous'])
+            # 将带 0 的处理成纯合位点
+            if A1 == '0' and A2 != '0':
+                A1_ = A2
+                A2_ = A2
+            if A2 == '0' and A1 != '0':
+                A1_ = A1
+                A2_ = A1
+            A = A1_ + A2_
+
+            # 杂合位点
+            if A1_ != A2_:
+                # 有REF，判断为正义
+                if X in A:
+                    strand = 'forward'
+                # 无REF，判断为反义
+                else:
+                    strand = 'reverse'
+
+            # 纯合位点
+            else:
+                # 既不是REF也不是REF的互补，判断为正义
+                if X != A1_ and X != SNP_DICT[A1_]:
+                    strand = 'forward'
+                # 是REF，判断为正义
+                if X == A1_:
+                    strand = 'forward'
+                # 是REF的互补，判断为反义
+                if X == SNP_DICT[A1_]:
+                    strand = 'reverse'
+
+
+        # if X in A and SNP_DICT[X] not in A:
+        #     reverse_list.append([CHR, POS, ID, DIS, A1, A2, X, SNP_DICT[X], 'forward'])
+        # else:
+        #     reverse_list.append([CHR, POS, ID, DIS, A1, A2, X, SNP_DICT[X], 'reverse'])
+    reverse_list.append([CHR, POS, ID, DIS, A1, A2, '', '', strand])
 
 print(len(reverse_list))
-print(len(hubu))
+# print(len(hubu))
 output = open('Reverse.txt', 'w', encoding='utf-8')
 output1 = open('Reverse_ID.txt', 'w', encoding='utf-8')
 for reverse in reverse_list:
