@@ -3,8 +3,12 @@
 import subprocess
 from tqdm import trange
 import numpy as np
+import sys
 
-f = open('CFJY_YY_4789_freq.frq', encoding='utf-8')
+# CFJY_YY_4789_freq.frq CFJY_YY_4789.map
+file1, file2 = sys.argv[1], sys.argv[2]
+
+f = open(file1, encoding='utf-8')
 lines = f.readlines()[1:]
 f.close()
 data_freq = []
@@ -13,7 +17,7 @@ for i in range(len(lines)):
     data_freq.append(line)
 
 data_freq = np.array(data_freq)
-f = open('CFJY_YY_4789.map', encoding='utf-8')
+f = open(file2, encoding='utf-8')
 lines = f.readlines()
 f.close()
 data_map = []
@@ -90,7 +94,6 @@ for i in trange(len(result_list)):
                 if X == SNP_DICT[A1_]:
                     strand = 'reverse'
 
-
         # if X in A and SNP_DICT[X] not in A:
         #     reverse_list.append([CHR, POS, ID, DIS, A1, A2, X, SNP_DICT[X], 'forward'])
         # else:
@@ -101,9 +104,13 @@ print(len(reverse_list))
 # print(len(hubu))
 output = open('Reverse.txt', 'w', encoding='utf-8')
 output1 = open('Reverse_ID.txt', 'w', encoding='utf-8')
+output2 = open('Ambiguous_ID.txt', 'w', encoding='utf-8')
 for reverse in reverse_list:
     output.writelines(' '.join(reverse) + '\n')
     if reverse[-1] == 'reverse':
         output1.writelines(reverse[2] + '\n')
+    if reverse[-1] == 'ambiguous':
+        output2.writelines(reverse[2] + '\n')
 output.close()
 output1.close()
+output2.close()
