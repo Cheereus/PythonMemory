@@ -1,9 +1,29 @@
 # coding=utf-8
-# samtools faidx /home/liujf/WORKSPACE/duh/11_1/reference/pig.fa chr1:1111-1111
+import sys
 import subprocess
 from tqdm import trange
 import numpy as np
 import sys
+
+
+def replace_sex(file_name, X_id, Y_id):
+
+    f = open(file_name + '.map', encoding='utf-8')
+    lines = f.readlines()
+    f.close()
+    data_map = []
+    for i in range(len(lines)):
+        line = list(map(str, lines[i].split()))
+        if line[0] == X_id:
+            line[0] = 'X'
+        if line[0] == Y_id:
+            line[0] = 'Y'
+        data_map.append(line)
+
+    output = open(file_name + '.map', 'w', encoding='utf-8')
+    for result in data_map:
+        output.writelines(' '.join(result) + '\n')
+    output.close()
 
 
 def find_reverse(file_name):
@@ -125,6 +145,85 @@ def find_reverse(file_name):
     output2.close()
 
 
+def compare_reverse(file_name):
+
+    f = open(file_name + '_reverse_ID.txt', encoding='utf-8')
+    lines = f.readlines()
+    f.close()
+    data_my = []
+    data_my_over = []
+    data_my_dict = {}
+    for i in range(len(lines)):
+        line = list(map(str, lines[i].split()))
+        data_my.append(line)
+        # print(line[0])
+        data_my_dict[line[0]] = True
+
+    # print(data_my_dict)
+    f = open(file_name + '.reverse', encoding='utf-8')
+    lines = f.readlines()[1:]
+    f.close()
+    data_flip = []
+    data_flip_over = []
+    data_flip_dict = {}
+    count = 0
+    for i in range(len(lines)):
+        line = list(map(str, lines[i].split()))
+        data_flip_dict[line[0]] = True
+        data_flip.append(line[0])
+        # print(line[0])
+        if line[0] in data_my_dict.keys():
+            count += 1
+        else:
+            data_flip_over.append(line[0])
+
+    print('Snpflip 有但咱没有：', len(data_flip_over))
+
+    count = 0
+    for i in range(len(data_my)):
+        ID = data_my[i][0]
+        if ID in data_flip_dict.keys():
+            count += 1
+        else:
+            data_my_over.append(ID)
+
+    print('咱有但是 Snpflip 没有：', len(data_my_over))
+
+    output = open(file_name + '_snpflip_over.txt', 'w', encoding='utf-8')
+    for result in data_flip_over:
+        output.writelines(result + '\n')
+    output.close()
+
+    output = open(file_name + '_us_over.txt', 'w', encoding='utf-8')
+    for result in data_my_over:
+        output.writelines(result + '\n')
+    output.close()
+
+
 if __name__ == '__main__':
-    file_name = sys.argv[1]
-    find_reverse(file_name)
+
+    f, X_id, Y_id = sys.argv[1], sys.argv[2], sys.argv[3]
+
+    replace_sex(f, X_id, Y_id)
+
+    cmd1 = 'module load plink'
+    cmd2 = 'plink --file $chip --make-bed --out $chip'
+    cmd3 = 'python3 /home/liujf/WORKSPACE/maorh/snpflip/snpflip-0.0.6/bin/snpflip -b $chip.bim -f /home/liujf/WORKSPACE/duh/10_2/reference/pig.fa -o $chip'
+    cmd4 = 'plink --file $chip --freq --out $chip_freq'
+
+    # cmd = ' && '.join([cmd1, cmd2, cmd3, cmd4]).replace('$chip', file_name)
+
+    for cmd in [cmd1, cmd2, cmd3, cmd4]:
+        cmd = cmd.replace('$chip', f)
+        print('------------------')
+        print('running:', cmd)
+        res = subprocess.run(args=cmd, shell=True, check=True)
+
+    print('------------------')
+    print('finding...')
+    find_reverse(f)
+    print('comparing...')
+    compare_reverse(f)
+    print('filtering...')
+    cmd5 = 'plink --file $chip --flip $chip_reverse.txt --exclude $chip_ambiguous_ID.txt --make-bed --out $chip_correct'
+    subprocess.run(args=cmd5.replace('$chip', f), shell=True, check=True)
